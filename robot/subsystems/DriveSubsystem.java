@@ -40,10 +40,10 @@ public class DriveSubsystem extends SubsystemBase {
     new WPI_TalonFX[] {new WPI_TalonFX(DriveConstants.kSWMotorPort1), new WPI_TalonFX(DriveConstants.kSWMotorPort2)}
   }; 
 
-  Translation2d m_frontLeftLocation = new Translation2d(0.26, 0.26);
-  Translation2d m_frontRightLocation = new Translation2d(0.26, -0.26);
-  Translation2d m_backLeftLocation = new Translation2d(-0.26, 0.26);
-  Translation2d m_backRightLocation = new Translation2d(-0.26, -0.26);
+  Translation2d m_frontLeftLocation = new Translation2d(0.375/2, 0.375/2);
+  Translation2d m_frontRightLocation = new Translation2d(0.375/2, -0.375/2);
+  Translation2d m_backLeftLocation = new Translation2d(-0.375/2, 0.375/2);
+  Translation2d m_backRightLocation = new Translation2d(-0.375/2, -0.375/2);
 
   SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
     m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
@@ -72,6 +72,7 @@ public class DriveSubsystem extends SubsystemBase {
       motors[i][1].configNeutralDeadband(0.001);
       motors[i][0].configNeutralDeadband(0.001);
     }
+    motors[1][0].setInverted(TalonFXInvertType.Clockwise);
   }
   
 
@@ -123,19 +124,18 @@ public class DriveSubsystem extends SubsystemBase {
     // System.out.println("unitsVel: " + unitsVel);
     motors[motor][0].set(TalonFXControlMode.Velocity, unitsVel);
 
-    if (motor == 1 || motor == 2) {
-      System.out.println("Vel: " + unitsVel);
-    }
-
-    double setpoint =  moduleStates[motor].angle.getRadians() / (2*Math.PI) * Constants.ConversionConstants.CTRE_TICKS_PER_REV;
+    double setpoint =  moduleStates[motor].angle.getRadians() / (2*Math.PI) * Constants.ConversionConstants.CTRE_TICKS_PER_REV * 1.5;
     // System.out.println("setpoint: " + setpoint);
+
     motors[motor][1].set(TalonFXControlMode.Position, setpoint);
   }
 
   public void updateSpeeds(double rad, double vx, double vy) {
     speeds.omegaRadiansPerSecond = rad;
     speeds.vxMetersPerSecond = vx;
+    System.out.println(speeds.vxMetersPerSecond);
     speeds.vyMetersPerSecond = vy;
+    System.out.println(speeds.vyMetersPerSecond);
   }
 
   public void updateModuleStates() {

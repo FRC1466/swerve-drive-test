@@ -32,15 +32,15 @@ public class DriveCommand extends CommandBase {
 
 
     private void m_drive() {
-        double vx = m_controller.getLeftX() * 2;
-        double vy = m_controller.getLeftY() * 2;
-        double rot = m_controller.getRightX() * Math.PI;
+        double vx = m_controller.getRightX() * 0.5;
+        double vy = m_controller.getLeftY() * 0.5;
+        double rot = 0; // m_controller.getRightX() * Math.PI;
 
-        if (!(Math.abs(vx) > 0.2)) {
+        if (!(Math.abs(vx) > 0.15)) {
             vx = 0;
         }
 
-        if (!(Math.abs(vy) > 0.2)) {
+        if (!(Math.abs(vy) > 0.15)) {
             vy = 0;
         }
 
@@ -51,16 +51,16 @@ public class DriveCommand extends CommandBase {
         // System.out.println("rot: " + rot);
         // System.out.println("vx: " + vx);
         // System.out.println("vy: " + vy);
-        System.out.println(m_drive.getErrorStates()[2][1]);
-        System.out.println(m_drive.getErrorStates()[2][0]);
-
-        rot = m_controller.getLeftX();
+        // System.out.println(m_drive.getErrorStates()[2][1]);
+        // System.out.println(m_drive.getErrorStates()[2][0]);
 
         m_drive.updateSpeeds(rot, vx, vy);
         m_drive.updateModuleStates();
 
-        for(int i = 0; i < m_drive.getStatesLength(); i++)
-        m_drive.driveFromOptimizedState(i);
+        for(int i = 0; i < m_drive.getStatesLength(); i++) {
+            m_drive.driveFromOptimizedState(i);
+        }
+        
     }
 
     private void updateSmartDashboard() {
