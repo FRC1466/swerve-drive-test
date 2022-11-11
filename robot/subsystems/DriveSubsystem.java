@@ -34,20 +34,22 @@ public class DriveSubsystem extends SubsystemBase {
 
   // motor array in a list for easy access (could do dict in future?)
   WPI_TalonFX[][] motors = new WPI_TalonFX[][] {
-    new WPI_TalonFX[] {new WPI_TalonFX(DriveConstants.kNEMotorPort1), new WPI_TalonFX(DriveConstants.kNEMotorPort2)},
-    new WPI_TalonFX[] {new WPI_TalonFX(DriveConstants.kNWMotorPort1), new WPI_TalonFX(DriveConstants.kNWMotorPort2)},
-    new WPI_TalonFX[] {new WPI_TalonFX(DriveConstants.kSEMotorPort1), new WPI_TalonFX(DriveConstants.kSEMotorPort2)},
-    new WPI_TalonFX[] {new WPI_TalonFX(DriveConstants.kSWMotorPort1), new WPI_TalonFX(DriveConstants.kSWMotorPort2)}
+    new WPI_TalonFX[] {new WPI_TalonFX(DriveConstants.FRONTRIGHT_PORT_DRIVE), new WPI_TalonFX(DriveConstants.FRONTRIGHT_PORT_ROTATE)},
+    new WPI_TalonFX[] {new WPI_TalonFX(DriveConstants.FRONTLEFT_PORT_DRIVE), new WPI_TalonFX(DriveConstants.FRONTLEFT_PORT_ROTATE)},
+    new WPI_TalonFX[] {new WPI_TalonFX(DriveConstants.BACKRIGHT_PORT_DRIVE), new WPI_TalonFX(DriveConstants.BACKRIGHT_PORT_ROTATE)},
+    new WPI_TalonFX[] {new WPI_TalonFX(DriveConstants.BACKLEFT_PORT_DRIVE), new WPI_TalonFX(DriveConstants.BACKLEFT_PORT_ROTATE)}
   }; 
 
-  Translation2d m_frontLeftLocation = new Translation2d(0.375/2, 0.375/2);
-  Translation2d m_frontRightLocation = new Translation2d(0.375/2, -0.375/2);
-  Translation2d m_backLeftLocation = new Translation2d(-0.375/2, 0.375/2);
-  Translation2d m_backRightLocation = new Translation2d(-0.375/2, -0.375/2);
+  // make the kinematics for the robot
+  Translation2d m_frontLeftLocation = new Translation2d(DriveConstants.TRACKWIDTH_METERS/2, DriveConstants.TRACKWIDTH_METERS/2);
+  Translation2d m_frontRightLocation = new Translation2d(DriveConstants.TRACKWIDTH_METERS/2, -DriveConstants.TRACKWIDTH_METERS/2);
+  Translation2d m_backLeftLocation = new Translation2d(-DriveConstants.TRACKWIDTH_METERS/2, DriveConstants.TRACKWIDTH_METERS/2);
+  Translation2d m_backRightLocation = new Translation2d(-DriveConstants.TRACKWIDTH_METERS/2, -DriveConstants.TRACKWIDTH_METERS/2);
 
   SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
     m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
   
+    // initialize speeds and modulestates, along with optimizations
   ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
   SwerveModuleState[] moduleStates = m_kinematics.toSwerveModuleStates(speeds);
 
@@ -80,42 +82,41 @@ public class DriveSubsystem extends SubsystemBase {
     for (int i=0; i<motors.length; i++) 
     {
       motors[i][0].configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
-      PIDConstants.kPIDLoopIdx, 
-      PIDConstants.kTimeoutMs);
+      PIDConstants.PID_LOOP_IDX, 
+      PIDConstants.TIMEOUT_MS);
       motors[i][1].configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
-      PIDConstants.kPIDLoopIdx, 
-      PIDConstants.kTimeoutMs);
+      PIDConstants.PID_LOOP_IDX, 
+      PIDConstants.TIMEOUT_MS);
 
 
       /* Config the peak and nominal outputs */
-      motors[i][0].configNominalOutputForward(0, PIDConstants.kTimeoutMs);
-      motors[i][0].configNominalOutputReverse(0, PIDConstants.kTimeoutMs);
-      motors[i][0].configPeakOutputForward(PIDConstants.kDriveGainsVelocity.kPeakOutput, PIDConstants.kTimeoutMs);
-      motors[i][0].configPeakOutputReverse(-PIDConstants.kDriveGainsVelocity.kPeakOutput, PIDConstants.kTimeoutMs);
+      motors[i][0].configNominalOutputForward(0, PIDConstants.TIMEOUT_MS);
+      motors[i][0].configNominalOutputReverse(0, PIDConstants.TIMEOUT_MS);
+      motors[i][0].configPeakOutputForward(PIDConstants.DRIVE_GAINS_VELOCITY.PEAK_OUTPUT, PIDConstants.TIMEOUT_MS);
+      motors[i][0].configPeakOutputReverse(-PIDConstants.DRIVE_GAINS_VELOCITY.PEAK_OUTPUT, PIDConstants.TIMEOUT_MS);
 
-      motors[i][1].configNominalOutputForward(0, PIDConstants.kTimeoutMs);
-      motors[i][1].configNominalOutputReverse(0, PIDConstants.kTimeoutMs);
-      motors[i][1].configPeakOutputForward(PIDConstants.kDriveGainsVelocity.kPeakOutput, PIDConstants.kTimeoutMs);
-      motors[i][1].configPeakOutputReverse(-PIDConstants.kDriveGainsVelocity.kPeakOutput, PIDConstants.kTimeoutMs);
+      motors[i][1].configNominalOutputForward(0, PIDConstants.TIMEOUT_MS);
+      motors[i][1].configNominalOutputReverse(0, PIDConstants.TIMEOUT_MS);
+      motors[i][1].configPeakOutputForward(PIDConstants.DRIVE_GAINS_VELOCITY.PEAK_OUTPUT, PIDConstants.TIMEOUT_MS);
+      motors[i][1].configPeakOutputReverse(-PIDConstants.DRIVE_GAINS_VELOCITY.PEAK_OUTPUT, PIDConstants.TIMEOUT_MS);
 
       /* Config the Velocity closed loop gains in slot0 */
-      motors[i][0].config_kF(PIDConstants.kPIDLoopIdx, PIDConstants.kDriveGainsVelocity.kF, PIDConstants.kTimeoutMs);
-      motors[i][0].config_kP(PIDConstants.kPIDLoopIdx, PIDConstants.kDriveGainsVelocity.kP, PIDConstants.kTimeoutMs);
-      motors[i][0].config_kI(PIDConstants.kPIDLoopIdx, PIDConstants.kDriveGainsVelocity.kI, PIDConstants.kTimeoutMs);
-      motors[i][0].config_kD(PIDConstants.kPIDLoopIdx, PIDConstants.kDriveGainsVelocity.kD, PIDConstants.kTimeoutMs);
+      motors[i][0].config_kF(PIDConstants.TIMEOUT_MS, PIDConstants.DRIVE_GAINS_VELOCITY.F, PIDConstants.TIMEOUT_MS);
+      motors[i][0].config_kP(PIDConstants.TIMEOUT_MS, PIDConstants.DRIVE_GAINS_VELOCITY.P, PIDConstants.TIMEOUT_MS);
+      motors[i][0].config_kI(PIDConstants.TIMEOUT_MS, PIDConstants.DRIVE_GAINS_VELOCITY.I, PIDConstants.TIMEOUT_MS);
+      motors[i][0].config_kD(PIDConstants.TIMEOUT_MS, PIDConstants.DRIVE_GAINS_VELOCITY.D, PIDConstants.TIMEOUT_MS);
 
-      motors[i][1].config_kF(PIDConstants.kPIDLoopIdx, PIDConstants.kDriveGainsPosition.kF, PIDConstants.kTimeoutMs);
-      motors[i][1].config_kP(PIDConstants.kPIDLoopIdx, PIDConstants.kDriveGainsPosition.kP, PIDConstants.kTimeoutMs);
-      motors[i][1].config_kI(PIDConstants.kPIDLoopIdx, PIDConstants.kDriveGainsPosition.kI, PIDConstants.kTimeoutMs);
-      motors[i][1].config_kD(PIDConstants.kPIDLoopIdx, PIDConstants.kDriveGainsPosition.kD, PIDConstants.kTimeoutMs);
+      motors[i][1].config_kF(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.F, PIDConstants.TIMEOUT_MS);
+      motors[i][1].config_kP(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.P, PIDConstants.TIMEOUT_MS);
+      motors[i][1].config_kI(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.I, PIDConstants.TIMEOUT_MS);
+      motors[i][1].config_kD(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.D, PIDConstants.TIMEOUT_MS);
     }
   }
 
 
   /**
-   * changes motors from optimized SwerveModuleState
-   * @param states Optimized SwerveModuleState calculated from other values
-   * @param motor motor index
+   * drives from an optimizes swervemodulestate
+   * @param motor the motor grouping that it drives from
    */
   public void driveFromOptimizedState(int motor) {
 
@@ -130,6 +131,12 @@ public class DriveSubsystem extends SubsystemBase {
     motors[motor][1].set(TalonFXControlMode.Position, setpoint);
   }
 
+  /**
+   * update the speeds class in the subsystem
+   * @param rad the rotation in radians
+   * @param vx the horizontal speed in m/s
+   * @param vy the vertical speed in m/s
+   */
   public void updateSpeeds(double rad, double vx, double vy) {
     speeds.omegaRadiansPerSecond = rad;
     speeds.vxMetersPerSecond = vx;
@@ -138,6 +145,9 @@ public class DriveSubsystem extends SubsystemBase {
     System.out.println(speeds.vyMetersPerSecond);
   }
 
+  /**
+   * update the modulestates in the subsystem
+   */
   public void updateModuleStates() {
     moduleStates = m_kinematics.toSwerveModuleStates(speeds);
 
@@ -152,10 +162,18 @@ public class DriveSubsystem extends SubsystemBase {
     moduleStatesOptimized[3] = backRightOptimized;
   }
 
+  /**
+   * 
+   * @return the length of the modulestates
+   */
   public int getStatesLength() {
     return moduleStatesOptimized.length;
   }
 
+  /**
+   * 
+   * @return a list of all motors' error states
+   */
   public double[][] getErrorStates() {
     double[][] errorStates = {
       {motors[0][1].getClosedLoopError(),  motors[0][0].getClosedLoopError()},
@@ -171,10 +189,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
-    // We need to invert one side of the drivetrain so that positive voltages
-    // result in both sides moving forward. Depending on how your robot's
-    // gearbox is constructed, you might have to invert the left side instead.
-
     initializeMotors();
     initializePID();
   }
