@@ -48,15 +48,12 @@ public class DriveCommand extends CommandBase {
         
     }
 
-    private void updateSmartDashboard() {
-        SmartDashboard.putNumber("forward", forward);
+    private void updateSmartDashboardSpeeds() {
+        SmartDashboard.putNumber("horizontal velocity", vx);
+        SmartDashboard.putNumber("vertical velocity", vy);
         SmartDashboard.putNumber("rotation", rot);
     }
 
-    private void updateSmartDashboardPID() {
-        SmartDashboard.putNumber("forward", forward);
-        SmartDashboard.putNumber("rotation", rot);
-    }
 
     @Override
     public void initialize() {
@@ -66,5 +63,6 @@ public class DriveCommand extends CommandBase {
     @Override
     public void execute() {
         drive();
+        updateSmartDashboardSpeeds();
     }
 }
