@@ -15,8 +15,13 @@ public class DriveCommand extends CommandBase {
     private double vy;
     private double rot;
     
-    public DriveCommand(DriveSubsystem subsystem, XboxController controller) {
-        this.drive = subsystem;
+    /**
+     * Initialize a basic drive command
+     * @param drive the drive subsystem
+     * @param controller the drive controller
+     */
+    public DriveCommand(DriveSubsystem drive, XboxController controller) {
+        this.drive = drive;
         addRequirements(this.drive);
         this.controller = controller;
     }
