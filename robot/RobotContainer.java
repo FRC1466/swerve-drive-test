@@ -30,16 +30,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final DriveSubsystem robotDrive = new DriveSubsystem();
   
 
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.DRIVER_PORT);
+  XboxController driverController = new XboxController(OIConstants.DRIVER_PORT);
   // The intake controller
-  XboxController m_intakeController = new XboxController(OIConstants.INTAKE_PORT);
+  XboxController intakeController = new XboxController(OIConstants.INTAKE_PORT);
 
   // the default commands
-  DriveCommand m_DriveCommand = new DriveCommand(m_robotDrive, m_driverController);
+  DriveCommand DriveCommand = new DriveCommand(this.robotDrive, this.driverController);
 
   
 
@@ -56,8 +56,8 @@ public class RobotContainer {
 
     // Configure default commands
     // Set the default drive command to split-stick arcade drive
-    m_robotDrive.setDefaultCommand(
-        m_DriveCommand
+    this.robotDrive.setDefaultCommand(
+        this.DriveCommand
     );
 
   }

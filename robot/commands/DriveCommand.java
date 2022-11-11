@@ -14,27 +14,22 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import java.lang.Math;
 
 public class DriveCommand extends CommandBase {
-    private final DriveSubsystem m_drive;
-    private final XboxController m_controller;
-    private int limitIter = 0;
-    private boolean isLimit = false;
-    private int stopIter = 0;
-    private int listIter = 0;
-    private double pastForward[] = {0, 0, 0, 0, 0};
+    private final DriveSubsystem drive;
+    private final XboxController controller;
     private double forward;
     private double rot;
     
     public DriveCommand(DriveSubsystem subsystem, XboxController controller) {
-        m_drive = subsystem;
-        addRequirements(m_drive);
-        m_controller = controller;
+        this.drive = subsystem;
+        addRequirements(this.drive);
+        this.controller = controller;
     }
 
 
-    private void m_drive() {
-        double vx = m_controller.getRightX() * 0.5;
-        double vy = m_controller.getLeftY() * 0.5;
-        double rot = 0; // m_controller.getRightX() * Math.PI;
+    private void drive() {
+        double vx = this.controller.getLeftX() * DriveConstants.LIMIT_VX;
+        double vy = this.controller.getLeftY() * DriveConstants.LIMIT_VY;
+        double rot = this.controller.getRightX() * Math.PI * DriveConstants.LIMIT_ROT;
 
         if (!(Math.abs(vx) > 0.15)) {
             vx = 0;
@@ -51,14 +46,14 @@ public class DriveCommand extends CommandBase {
         // System.out.println("rot: " + rot);
         // System.out.println("vx: " + vx);
         // System.out.println("vy: " + vy);
-        // System.out.println(m_drive.getErrorStates()[2][1]);
-        // System.out.println(m_drive.getErrorStates()[2][0]);
+        // System.out.println(_drive.getErrorStates()[2][1]);
+        // System.out.println(_drive.getErrorStates()[2][0]);
 
-        m_drive.updateSpeeds(rot, vx, vy);
-        m_drive.updateModuleStates();
+        this.drive.updateSpeeds(rot, vx, vy);
+        this.drive.updateModuleStates();
 
-        for(int i = 0; i < m_drive.getStatesLength(); i++) {
-            m_drive.driveFromOptimizedState(i);
+        for(int i = 0; i < this.drive.getStatesLength(); i++) {
+            this.drive.driveFromOptimizedState(i);
         }
         
     }
@@ -80,6 +75,6 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        m_drive();
+        drive();
     }
 }
