@@ -4,29 +4,20 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PIDConstants;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import java.lang.Math;
 
@@ -63,7 +54,10 @@ public class DriveSubsystem extends SubsystemBase {
   // The robot's drive
   
 
-  private void initializeMotors() { //set configs of this.motors
+  /**
+   * set configs of motors
+   */
+  private void initializeMotors() { 
     for (int i=0; i<this.motors.length; i++) {
       this.motors[i][1].configFactoryDefault();
       this.motors[i][0].configFactoryDefault();
@@ -77,8 +71,10 @@ public class DriveSubsystem extends SubsystemBase {
     this.motors[1][0].setInverted(TalonFXInvertType.Clockwise);
   }
   
-
-  private void initializePID() { //set configs of PID
+  /**
+   * set configs of PID for motors
+   */
+  private void initializePID() { 
     for (int i=0; i<this.motors.length; i++) 
     {
       this.motors[i][0].configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
@@ -168,7 +164,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   /**
    * 
-   * @return a list of all this.motors' error states
+   * @return a list of all the motors' error states
    */
   public double[][] getErrorStates() {
     double[][] errorStates = {
