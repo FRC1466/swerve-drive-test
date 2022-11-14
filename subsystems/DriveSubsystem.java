@@ -73,6 +73,11 @@ public class DriveSubsystem extends SubsystemBase {
       motors[i][0].configNeutralDeadband(0.001);
     }
     motors[1][0].setInverted(TalonFXInvertType.Clockwise);
+    motors[2][1].setInverted(TalonFXInvertType.Clockwise);
+    motors[0][1].setInverted(TalonFXInvertType.Clockwise);
+    motors[1][1].setInverted(TalonFXInvertType.Clockwise);
+    motors[3][1].setInverted(TalonFXInvertType.Clockwise);
+
   }
   
 
@@ -111,6 +116,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
 
+  
+
 
   /**
    * changes motors from optimized SwerveModuleState
@@ -124,7 +131,7 @@ public class DriveSubsystem extends SubsystemBase {
     // System.out.println("unitsVel: " + unitsVel);
     motors[motor][0].set(TalonFXControlMode.Velocity, unitsVel);
 
-    double setpoint =  moduleStates[motor].angle.getRadians() / (2*Math.PI) * Constants.ConversionConstants.CTRE_TICKS_PER_REV * 1.5;
+    double setpoint =  (moduleStates[motor].angle.getRadians()) / (2*Math.PI) * Constants.ConversionConstants.CTRE_TICKS_PER_REV * Math.PI/2;
     // System.out.println("setpoint: " + setpoint);
 
     motors[motor][1].set(TalonFXControlMode.Position, setpoint);
@@ -133,9 +140,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void updateSpeeds(double rad, double vx, double vy) {
     speeds.omegaRadiansPerSecond = rad;
     speeds.vxMetersPerSecond = vx;
-    System.out.println(speeds.vxMetersPerSecond);
     speeds.vyMetersPerSecond = vy;
-    System.out.println(speeds.vyMetersPerSecond);
   }
 
   public void updateModuleStates() {

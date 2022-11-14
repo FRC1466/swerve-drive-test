@@ -32,9 +32,9 @@ public class DriveCommand extends CommandBase {
 
 
     private void m_drive() {
-        double vx = m_controller.getRightX() * 0.5;
-        double vy = m_controller.getLeftY() * 0.5;
-        double rot = 0; // m_controller.getRightX() * Math.PI;
+        double vx = m_controller.getLeftX() * 2;
+        double vy = m_controller.getLeftY() * 2;
+        double rot = m_controller.getRightX() * Math.PI;
 
         if (!(Math.abs(vx) > 0.15)) {
             vx = 0;
