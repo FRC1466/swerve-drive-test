@@ -142,7 +142,6 @@ public class DriveSubsystem extends SubsystemBase {
   public void updateModuleStates() {
     moduleStates = _kinematics.toSwerveModuleStates(speeds);
 
-    // TODO: Optimized states from CanCoders (Set up initialization and the like)
     frontLeftOptimized = SwerveModuleState.optimize(moduleStates[0], new Rotation2d(this.motors[1][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
     frontRightOptimized = SwerveModuleState.optimize(moduleStates[1], new Rotation2d(this.motors[0][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
     backLeftOptimized = SwerveModuleState.optimize(moduleStates[2], new Rotation2d(this.motors[3][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
