@@ -113,6 +113,9 @@ public class DriveSubsystem extends SubsystemBase {
       motors[i][1].config_kP(PIDConstants.kPIDLoopIdx, PIDConstants.kDriveGainsPosition.kP, PIDConstants.kTimeoutMs);
       motors[i][1].config_kI(PIDConstants.kPIDLoopIdx, PIDConstants.kDriveGainsPosition.kI, PIDConstants.kTimeoutMs);
       motors[i][1].config_kD(PIDConstants.kPIDLoopIdx, PIDConstants.kDriveGainsPosition.kD, PIDConstants.kTimeoutMs);
+
+      /* Hopefully make not continous */
+      motors[i][1].configFeedbackNotContinuous(true, PIDConstants.kTimeoutMs);
     }
   }
 
