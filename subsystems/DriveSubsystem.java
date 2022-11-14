@@ -37,12 +37,12 @@ public class DriveSubsystem extends SubsystemBase {
   Translation2d backLeftLocation = new Translation2d(-DriveConstants.TRACKWIDTH_METERS/2, DriveConstants.TRACKWIDTH_METERS/2);
   Translation2d backRightLocation = new Translation2d(-DriveConstants.TRACKWIDTH_METERS/2, -DriveConstants.TRACKWIDTH_METERS/2);
 
-  SwerveDriveKinematics _kinematics = new SwerveDriveKinematics(
-    this.frontLeftLocation, this.frontRightLocation, this.backLeftLocation, this.backRightLocation);
+  SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+    frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
   
     // initialize speeds and modulestates, along with optimizations
   ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
-  SwerveModuleState[] moduleStates = _kinematics.toSwerveModuleStates(speeds);
+  SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
 
   SwerveModuleState frontLeftOptimized = SwerveModuleState.optimize(moduleStates[0], new Rotation2d(0));
   SwerveModuleState frontRightOptimized = SwerveModuleState.optimize(moduleStates[1], new Rotation2d(0));
@@ -58,54 +58,54 @@ public class DriveSubsystem extends SubsystemBase {
    * set configs of motors
    */
   private void initializeMotors() { 
-    for (int i=0; i<this.motors.length; i++) {
-      this.motors[i][1].configFactoryDefault();
-      this.motors[i][0].configFactoryDefault();
-      this.motors[i][1].set(ControlMode.PercentOutput, 0);
-      this.motors[i][0].set(ControlMode.PercentOutput, 0);
-      this.motors[i][1].setNeutralMode(NeutralMode.Brake);
-      this.motors[i][0].setNeutralMode(NeutralMode.Brake);
-      this.motors[i][1].configNeutralDeadband(0.001);
-      this.motors[i][0].configNeutralDeadband(0.001);
+    for (int i=0; i<motors.length; i++) {
+      motors[i][1].configFactoryDefault();
+      motors[i][0].configFactoryDefault();
+      motors[i][1].set(ControlMode.PercentOutput, 0);
+      motors[i][0].set(ControlMode.PercentOutput, 0);
+      motors[i][1].setNeutralMode(NeutralMode.Brake);
+      motors[i][0].setNeutralMode(NeutralMode.Brake);
+      motors[i][1].configNeutralDeadband(0.001);
+      motors[i][0].configNeutralDeadband(0.001);
     }
-    this.motors[1][0].setInverted(TalonFXInvertType.Clockwise);
+    motors[1][0].setInverted(TalonFXInvertType.Clockwise);
   }
   
   /**
    * set configs of PID for motors
    */
   private void initializePID() { 
-    for (int i=0; i<this.motors.length; i++) 
+    for (int i=0; i<motors.length; i++) 
     {
-      this.motors[i][0].configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
+      motors[i][0].configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
       PIDConstants.PID_LOOP_IDX, 
       PIDConstants.TIMEOUT_MS);
-      this.motors[i][1].configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
+      motors[i][1].configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
       PIDConstants.PID_LOOP_IDX, 
       PIDConstants.TIMEOUT_MS);
 
 
       /* Config the peak and nominal outputs */
-      this.motors[i][0].configNominalOutputForward(0, PIDConstants.TIMEOUT_MS);
-      this.motors[i][0].configNominalOutputReverse(0, PIDConstants.TIMEOUT_MS);
-      this.motors[i][0].configPeakOutputForward(PIDConstants.DRIVE_GAINS_VELOCITY.PEAK_OUTPUT, PIDConstants.TIMEOUT_MS);
-      this.motors[i][0].configPeakOutputReverse(-PIDConstants.DRIVE_GAINS_VELOCITY.PEAK_OUTPUT, PIDConstants.TIMEOUT_MS);
+      motors[i][0].configNominalOutputForward(0, PIDConstants.TIMEOUT_MS);
+      motors[i][0].configNominalOutputReverse(0, PIDConstants.TIMEOUT_MS);
+      motors[i][0].configPeakOutputForward(PIDConstants.DRIVE_GAINS_VELOCITY.PEAK_OUTPUT, PIDConstants.TIMEOUT_MS);
+      motors[i][0].configPeakOutputReverse(-PIDConstants.DRIVE_GAINS_VELOCITY.PEAK_OUTPUT, PIDConstants.TIMEOUT_MS);
 
-      this.motors[i][1].configNominalOutputForward(0, PIDConstants.TIMEOUT_MS);
-      this.motors[i][1].configNominalOutputReverse(0, PIDConstants.TIMEOUT_MS);
-      this.motors[i][1].configPeakOutputForward(PIDConstants.DRIVE_GAINS_VELOCITY.PEAK_OUTPUT, PIDConstants.TIMEOUT_MS);
-      this.motors[i][1].configPeakOutputReverse(-PIDConstants.DRIVE_GAINS_VELOCITY.PEAK_OUTPUT, PIDConstants.TIMEOUT_MS);
+      motors[i][1].configNominalOutputForward(0, PIDConstants.TIMEOUT_MS);
+      motors[i][1].configNominalOutputReverse(0, PIDConstants.TIMEOUT_MS);
+      motors[i][1].configPeakOutputForward(PIDConstants.DRIVE_GAINS_VELOCITY.PEAK_OUTPUT, PIDConstants.TIMEOUT_MS);
+      motors[i][1].configPeakOutputReverse(-PIDConstants.DRIVE_GAINS_VELOCITY.PEAK_OUTPUT, PIDConstants.TIMEOUT_MS);
 
       /* Config the Velocity closed loop gains in slot0 */
-      this.motors[i][0].config_kF(PIDConstants.TIMEOUT_MS, PIDConstants.DRIVE_GAINS_VELOCITY.F, PIDConstants.TIMEOUT_MS);
-      this.motors[i][0].config_kP(PIDConstants.TIMEOUT_MS, PIDConstants.DRIVE_GAINS_VELOCITY.P, PIDConstants.TIMEOUT_MS);
-      this.motors[i][0].config_kI(PIDConstants.TIMEOUT_MS, PIDConstants.DRIVE_GAINS_VELOCITY.I, PIDConstants.TIMEOUT_MS);
-      this.motors[i][0].config_kD(PIDConstants.TIMEOUT_MS, PIDConstants.DRIVE_GAINS_VELOCITY.D, PIDConstants.TIMEOUT_MS);
+      motors[i][0].config_kF(PIDConstants.TIMEOUT_MS, PIDConstants.DRIVE_GAINS_VELOCITY.F, PIDConstants.TIMEOUT_MS);
+      motors[i][0].config_kP(PIDConstants.TIMEOUT_MS, PIDConstants.DRIVE_GAINS_VELOCITY.P, PIDConstants.TIMEOUT_MS);
+      motors[i][0].config_kI(PIDConstants.TIMEOUT_MS, PIDConstants.DRIVE_GAINS_VELOCITY.I, PIDConstants.TIMEOUT_MS);
+      motors[i][0].config_kD(PIDConstants.TIMEOUT_MS, PIDConstants.DRIVE_GAINS_VELOCITY.D, PIDConstants.TIMEOUT_MS);
 
-      this.motors[i][1].config_kF(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.F, PIDConstants.TIMEOUT_MS);
-      this.motors[i][1].config_kP(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.P, PIDConstants.TIMEOUT_MS);
-      this.motors[i][1].config_kI(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.I, PIDConstants.TIMEOUT_MS);
-      this.motors[i][1].config_kD(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.D, PIDConstants.TIMEOUT_MS);
+      motors[i][1].config_kF(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.F, PIDConstants.TIMEOUT_MS);
+      motors[i][1].config_kP(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.P, PIDConstants.TIMEOUT_MS);
+      motors[i][1].config_kI(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.I, PIDConstants.TIMEOUT_MS);
+      motors[i][1].config_kD(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.D, PIDConstants.TIMEOUT_MS);
     }
   }
 
@@ -116,12 +116,22 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void driveFromOptimizedState(int motor) {
 
+    // System.out.println("speed: " + moduleStates[motor].speedMetersPerSecond);
     double unitsVel = moduleStates[motor].speedMetersPerSecond / Constants.ConversionConstants.CTRE_NATIVE_TO_MPS;
-    this.motors[motor][0].set(TalonFXControlMode.Velocity, unitsVel);
-    System.out.println("unitsVel: " + unitsVel);
+    // System.out.println("unitsVel: " + unitsVel);
+    // motors[motor][0].set(TalonFXControlMode.Velocity, 10000.0);
+    motors[0][0].set(TalonFXControlMode.Velocity, 100000.0);
+    System.out.println("vel: " + motors[0][0].getSelectedSensorVelocity());
+
+
+    /*
+    art
+
+    */
+    
 
     double setpoint =  moduleStates[motor].angle.getRadians() / (2*Math.PI) * Constants.ConversionConstants.CTRE_TICKS_PER_REV * 1.5;
-    this.motors[motor][1].set(TalonFXControlMode.Position, setpoint);
+    motors[motor][1].set(TalonFXControlMode.Position, setpoint);
   }
 
   /**
@@ -140,12 +150,20 @@ public class DriveSubsystem extends SubsystemBase {
    * update the modulestates in the subsystem
    */
   public void updateModuleStates() {
-    moduleStates = _kinematics.toSwerveModuleStates(speeds);
+    moduleStates = kinematics.toSwerveModuleStates(speeds);
 
+<<<<<<< HEAD
     frontLeftOptimized = SwerveModuleState.optimize(moduleStates[0], new Rotation2d(this.motors[1][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
     frontRightOptimized = SwerveModuleState.optimize(moduleStates[1], new Rotation2d(this.motors[0][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
     backLeftOptimized = SwerveModuleState.optimize(moduleStates[2], new Rotation2d(this.motors[3][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
     backRightOptimized = SwerveModuleState.optimize(moduleStates[3], new Rotation2d(this.motors[2][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
+=======
+    // TODO: Optimized states from CanCoders (Set up initialization and the like)
+    frontLeftOptimized = SwerveModuleState.optimize(moduleStates[0], new Rotation2d(motors[1][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
+    frontRightOptimized = SwerveModuleState.optimize(moduleStates[1], new Rotation2d(motors[0][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
+    backLeftOptimized = SwerveModuleState.optimize(moduleStates[2], new Rotation2d(motors[3][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
+    backRightOptimized = SwerveModuleState.optimize(moduleStates[3], new Rotation2d(motors[2][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
+>>>>>>> parent of 2c2d0b0 (Revert "few changes")
 
     moduleStatesOptimized[0] = frontLeftOptimized;
     moduleStatesOptimized[1] = frontRightOptimized;
@@ -167,10 +185,10 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double[][] getErrorStates() {
     double[][] errorStates = {
-      {this.motors[0][1].getClosedLoopError(),  this.motors[0][0].getClosedLoopError()},
-      {this.motors[1][1].getClosedLoopError(),  this.motors[1][0].getClosedLoopError()},
-      {this.motors[2][1].getClosedLoopError(),  this.motors[2][0].getClosedLoopError()},
-      {this.motors[3][1].getClosedLoopError(),  this.motors[3][0].getClosedLoopError()}
+      {motors[0][1].getClosedLoopError(),  motors[0][0].getClosedLoopError()},
+      {motors[1][1].getClosedLoopError(),  motors[1][0].getClosedLoopError()},
+      {motors[2][1].getClosedLoopError(),  motors[2][0].getClosedLoopError()},
+      {motors[3][1].getClosedLoopError(),  motors[3][0].getClosedLoopError()}
     };
     return errorStates;
   }
@@ -191,15 +209,15 @@ public class DriveSubsystem extends SubsystemBase {
 
 
   /**
-   * Sets the maximum output of the PID in this.motors
+   * Sets the maximum output of the PID in motors
    * @param peakOutput the peak output
    */
   public void setPeakOutputPID(double peakOutput) {
-    for (int i = 0; i < this.motors.length; i++) {
-      this.motors[i][0].configPeakOutputForward(peakOutput);
-      this.motors[i][1].configPeakOutputForward(peakOutput);
-      this.motors[i][0].configPeakOutputReverse(-peakOutput);
-      this.motors[i][1].configPeakOutputReverse(-peakOutput);
+    for (int i = 0; i < motors.length; i++) {
+      motors[i][0].configPeakOutputForward(peakOutput);
+      motors[i][1].configPeakOutputForward(peakOutput);
+      motors[i][0].configPeakOutputReverse(-peakOutput);
+      motors[i][1].configPeakOutputReverse(-peakOutput);
     }
   }
 
