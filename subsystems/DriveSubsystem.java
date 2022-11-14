@@ -118,6 +118,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     double unitsVel = moduleStates[motor].speedMetersPerSecond / Constants.ConversionConstants.CTRE_NATIVE_TO_MPS;
     this.motors[motor][0].set(TalonFXControlMode.Velocity, unitsVel);
+    System.out.println("unitsVel: " + unitsVel);
 
     double setpoint =  moduleStates[motor].angle.getRadians() / (2*Math.PI) * Constants.ConversionConstants.CTRE_TICKS_PER_REV * 1.5;
     this.motors[motor][1].set(TalonFXControlMode.Position, setpoint);
@@ -132,9 +133,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void updateSpeeds(double rad, double vx, double vy) {
     speeds.omegaRadiansPerSecond = rad;
     speeds.vxMetersPerSecond = vx;
-    System.out.println(speeds.vxMetersPerSecond);
     speeds.vyMetersPerSecond = vy;
-    System.out.println(speeds.vyMetersPerSecond);
   }
 
   /**
