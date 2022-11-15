@@ -10,8 +10,9 @@ import java.lang.Math;
 public class DriveCommand extends CommandBase {
     private final DriveSubsystem m_drive;
     private final XboxController m_controller;
-    private double forward;
-    private double rot;
+    private double vx = 0;
+    private double vy = 0;
+    private double rot = 0;
     
     public DriveCommand(DriveSubsystem subsystem, XboxController controller) {
         m_drive = subsystem;
@@ -21,9 +22,9 @@ public class DriveCommand extends CommandBase {
 
 
     private void m_drive() {
-        double vx = m_controller.getLeftX() * 2;
-        double vy = m_controller.getLeftY() * 2;
-        double rot = m_controller.getRightX() * Math.PI;
+        vx = m_controller.getLeftX() * 2;
+        vy = m_controller.getLeftY() * 2;
+        rot = m_controller.getRightX() * Math.PI;
 
         if (!(Math.abs(vx) > 0.15)) {
             vx = 0;
@@ -37,12 +38,6 @@ public class DriveCommand extends CommandBase {
             rot = 0;
         }
 
-        // System.out.println("rot: " + rot);
-        // System.out.println("vx: " + vx);
-        // System.out.println("vy: " + vy);
-        // System.out.println(m_drive.getErrorStates()[2][1]);
-        // System.out.println(m_drive.getErrorStates()[2][0]);
-
         m_drive.updateSpeeds(rot, vx, vy);
         m_drive.updateModuleStates();
 
@@ -53,8 +48,9 @@ public class DriveCommand extends CommandBase {
     }
 
     private void updateSmartDashboard() {
-        SmartDashboard.putNumber("forward", forward);
-        SmartDashboard.putNumber("rotation", rot);
+        SmartDashboard.putNumber("vx", vx);
+        SmartDashboard.putNumber("vy", vy);
+        SmartDashboard.putNumber("rot", rot);
     }
 
     @Override
@@ -65,5 +61,6 @@ public class DriveCommand extends CommandBase {
     @Override
     public void execute() {
         m_drive();
+        updateSmartDashboard();
     }
 }
