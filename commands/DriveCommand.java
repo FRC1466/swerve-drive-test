@@ -10,11 +10,6 @@ import java.lang.Math;
 public class DriveCommand extends CommandBase {
     private final DriveSubsystem m_drive;
     private final XboxController m_controller;
-    private int limitIter = 0;
-    private boolean isLimit = false;
-    private int stopIter = 0;
-    private int listIter = 0;
-    private double pastForward[] = {0, 0, 0, 0, 0};
     private double forward;
     private double rot;
     
@@ -58,11 +53,6 @@ public class DriveCommand extends CommandBase {
     }
 
     private void updateSmartDashboard() {
-        SmartDashboard.putNumber("forward", forward);
-        SmartDashboard.putNumber("rotation", rot);
-    }
-
-    private void updateSmartDashboardPID() {
         SmartDashboard.putNumber("forward", forward);
         SmartDashboard.putNumber("rotation", rot);
     }

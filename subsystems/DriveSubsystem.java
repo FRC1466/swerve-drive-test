@@ -120,14 +120,10 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void driveFromOptimizedState(int motor) {
 
-    double percent = Math.tanh(moduleStatesOptimized[motor].speedMetersPerSecond); //TODO: proper conversion here
     double unitsVel = moduleStates[motor].speedMetersPerSecond / Constants.ConversionConstants.CTRE_NATIVE_TO_MPS;
-    // System.out.println("unitsVel: " + unitsVel);
     motors[motor][0].set(TalonFXControlMode.Velocity, unitsVel);
 
     double setpoint =  (moduleStates[motor].angle.getRadians()) / (2*Math.PI) * Constants.ConversionConstants.CTRE_TICKS_PER_REV * Math.PI/2;
-    // System.out.println("setpoint: " + setpoint);
-
     motors[motor][1].set(TalonFXControlMode.Position, setpoint);
   }
 
