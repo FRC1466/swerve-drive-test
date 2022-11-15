@@ -19,7 +19,6 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import java.lang.Math;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -31,10 +30,10 @@ public class DriveSubsystem extends SubsystemBase {
     new WPI_TalonFX[] {new WPI_TalonFX(DriveConstants.BACKLEFT_PORT_DRIVE), new WPI_TalonFX(DriveConstants.BACKLEFT_PORT_ROTATE)}
   }; 
 
-  Translation2d m_frontLeftLocation = new Translation2d(0.375/2, 0.375/2);
-  Translation2d m_frontRightLocation = new Translation2d(0.375/2, -0.375/2);
-  Translation2d m_backLeftLocation = new Translation2d(-0.375/2, 0.375/2);
-  Translation2d m_backRightLocation = new Translation2d(-0.375/2, -0.375/2);
+  Translation2d m_frontLeftLocation = new Translation2d(DriveConstants.TRACKWIDTH_METERS/2, DriveConstants.TRACKWIDTH_METERS/2);
+  Translation2d m_frontRightLocation = new Translation2d(DriveConstants.TRACKWIDTH_METERS/2, -DriveConstants.TRACKWIDTH_METERS/2);
+  Translation2d m_backLeftLocation = new Translation2d(-DriveConstants.TRACKWIDTH_METERS/2, DriveConstants.TRACKWIDTH_METERS/2);
+  Translation2d m_backRightLocation = new Translation2d(-DriveConstants.TRACKWIDTH_METERS/2, -DriveConstants.TRACKWIDTH_METERS/2);
 
   SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
     m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
@@ -48,10 +47,10 @@ public class DriveSubsystem extends SubsystemBase {
   SwerveModuleState backRightOptimized = SwerveModuleState.optimize(moduleStates[3], new Rotation2d(0));
 
   SwerveModuleState[] moduleStatesOptimized = new SwerveModuleState[] {frontLeftOptimized, frontRightOptimized, backLeftOptimized, backRightOptimized};
-
-  // The robot's drive
   
-
+  /**
+   * Initialize and set configs of the motors
+   */
   private void initializeMotors() { //set configs of motors
     for (int i=0; i<motors.length; i++) {
       motors[i][1].configFactoryDefault();
@@ -71,8 +70,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   }
   
-
-  private void initializePID() { //set configs of PID
+  /** Initialize motor PID */
+  private void initializePID() {
     for (int i=0; i<motors.length; i++) 
     {
       motors[i][0].configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
@@ -123,23 +122,32 @@ public class DriveSubsystem extends SubsystemBase {
     double unitsVel = moduleStates[motor].speedMetersPerSecond / Constants.ConversionConstants.CTRE_NATIVE_TO_MPS;
     motors[motor][0].set(TalonFXControlMode.Velocity, unitsVel);
 
-    double setpoint =  (moduleStates[motor].angle.getRadians()) / (2*Math.PI) * Constants.ConversionConstants.CTRE_TICKS_PER_REV * Math.PI/2;
+    double setpoint =  moduleStates[motor].angle.getRadians() / Constants.ConversionConstants.CTRE_TICKS_PER_REV;
     motors[motor][1].set(TalonFXControlMode.Position, setpoint);
   }
 
+  /**
+   * update speeds kinematics class 
+   * @param rad rad/s speed of robot
+   * @param vx horizontal velocity in m/s
+   * @param vy vertical velocity in m/s
+   */
   public void updateSpeeds(double rad, double vx, double vy) {
     speeds.omegaRadiansPerSecond = rad;
     speeds.vxMetersPerSecond = vx;
     speeds.vyMetersPerSecond = vy;
   }
 
+  /**
+   * update both normal module states and optimized states
+   */
   public void updateModuleStates() {
     moduleStates = m_kinematics.toSwerveModuleStates(speeds);
 
-    frontLeftOptimized = SwerveModuleState.optimize(moduleStates[0], new Rotation2d(motors[1][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
-    frontRightOptimized = SwerveModuleState.optimize(moduleStates[1], new Rotation2d(motors[0][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
-    backLeftOptimized = SwerveModuleState.optimize(moduleStates[2], new Rotation2d(motors[3][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
-    backRightOptimized = SwerveModuleState.optimize(moduleStates[3], new Rotation2d(motors[2][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV*(2*Math.PI)));
+    frontLeftOptimized = SwerveModuleState.optimize(moduleStates[0], new Rotation2d(motors[1][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV));
+    frontRightOptimized = SwerveModuleState.optimize(moduleStates[1], new Rotation2d(motors[0][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV));
+    backLeftOptimized = SwerveModuleState.optimize(moduleStates[2], new Rotation2d(motors[3][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV));
+    backRightOptimized = SwerveModuleState.optimize(moduleStates[3], new Rotation2d(motors[2][0].getSelectedSensorPosition()/Constants.ConversionConstants.CTRE_TICKS_PER_REV));
 
     moduleStatesOptimized[0] = frontLeftOptimized;
     moduleStatesOptimized[1] = frontRightOptimized;
@@ -147,10 +155,17 @@ public class DriveSubsystem extends SubsystemBase {
     moduleStatesOptimized[3] = backRightOptimized;
   }
 
+  /**
+   * @return length of module states list
+   */
   public int getStatesLength() {
     return moduleStatesOptimized.length;
   }
 
+  /**
+   * get all motor errors
+   * @return list of all errorstates of the motors
+   */
   public double[][] getErrorStates() {
     double[][] errorStates = {
       {motors[0][1].getClosedLoopError(),  motors[0][0].getClosedLoopError()},
@@ -166,10 +181,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
-    // We need to invert one side of the drivetrain so that positive voltages
-    // result in both sides moving forward. Depending on how your robot's
-    // gearbox is constructed, you might have to invert the left side instead.
-
     initializeMotors();
     initializePID();
   }

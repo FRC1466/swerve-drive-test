@@ -73,9 +73,7 @@ public final class Constants {
       PID_LOOP_IDX = 0,
       TIMEOUT_MS = 30;
 
-    //                                                    kP   	 kI    kD      kF          Iz    PeakOut
     public final static Gains DRIVE_GAINS_VELOCITY  = new Gains(0.2, 0.0001, 4.0, 0,  0,  0.6);
-    //   0.35,0.001,0.2                                           kP: 4   	 kI    kD      kF          Iz    PeakOut
     public final static Gains DRIVE_GAINS_POSITION  = new Gains(0.05, 0.00001, 0, 0,  0,  0.25);
   }
 

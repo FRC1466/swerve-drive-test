@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 import java.lang.Math;
@@ -14,17 +15,24 @@ public class DriveCommand extends CommandBase {
     private double vy = 0;
     private double rot = 0;
     
+    /**
+     * Default command for driving
+     * @param subsystem drive subsystem
+     * @param controller drive controller
+     */
     public DriveCommand(DriveSubsystem subsystem, XboxController controller) {
         m_drive = subsystem;
         addRequirements(m_drive);
         m_controller = controller;
     }
 
-
+    /**
+     * local driving function
+     */
     private void m_drive() {
-        vx = m_controller.getLeftX() * 2;
-        vy = m_controller.getLeftY() * 2;
-        rot = m_controller.getRightX() * Math.PI;
+        vx = m_controller.getLeftX() * DriveConstants.LIMIT_VX;
+        vy = m_controller.getLeftY() * DriveConstants.LIMIT_VY;
+        rot = m_controller.getRightX() * DriveConstants.LIMIT_ROT;
 
         if (!(Math.abs(vx) > 0.15)) {
             vx = 0;
@@ -47,6 +55,9 @@ public class DriveCommand extends CommandBase {
         
     }
 
+    /**
+     * update smartdashboard with a few values
+     */
     private void updateSmartDashboard() {
         SmartDashboard.putNumber("vx", vx);
         SmartDashboard.putNumber("vy", vy);
