@@ -24,9 +24,9 @@ public class RobotContainer {
   
 
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  XboxController m_driverController = new XboxController(OIConstants.DRIVER_PORT);
   // The intake controller
-  XboxController m_intakeController = new XboxController(OIConstants.IntakePort);
+  XboxController m_intakeController = new XboxController(OIConstants.INTAKE_PORT);
 
   // the default commands
   DriveCommand m_DriveCommand = new DriveCommand(m_robotDrive, m_driverController);
