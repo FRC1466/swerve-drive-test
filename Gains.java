@@ -1,12 +1,12 @@
 package frc.robot;
 
 public class Gains {
-    public final double P;
-    public final double I;
-    public final double D;
-    public final double F;
-    public final int IZONE;
-    public final double PEAK_OUTPUT;
+    public double P;
+    public double I;
+    public double D;
+    public double F;
+    public double IZONE;
+    public double PEAK_OUTPUT;
 	
 	/**
 	 * Create a new gains profile for PID
