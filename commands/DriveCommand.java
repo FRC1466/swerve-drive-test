@@ -120,7 +120,7 @@ public class DriveCommand extends CommandBase {
     @Override
     public void execute() {
         m_drive();
-        updateSmartDashboard();
-        updatePID();
+        // updateSmartDashboard();
+        // updatePID();
     }
 }

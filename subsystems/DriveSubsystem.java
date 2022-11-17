@@ -11,13 +11,17 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 public class DriveSubsystem extends SubsystemBase {
 
-  private final WPI_PigeonIMU gyro = new WPI_PigeonIMU(DriveConstants.GYRO_PORT);
+  private final WPI_TalonSRX gyro_motor = new WPI_TalonSRX(DriveConstants.GYRO_PORT);
+  private final WPI_PigeonIMU gyro = new WPI_PigeonIMU(gyro_motor);
   private final SwerveModule frontLeftModule = new SwerveModule(DriveConstants.FRONTLEFT_PORT_DRIVE, DriveConstants.FRONTLEFT_PORT_ROTATE);
   private final SwerveModule frontRightModule = new SwerveModule(DriveConstants.FRONTRIGHT_PORT_DRIVE, DriveConstants.FRONTRIGHT_PORT_ROTATE);
   private final SwerveModule backLeftModule = new SwerveModule(DriveConstants.BACKLEFT_PORT_DRIVE, DriveConstants.BACKLEFT_PORT_ROTATE);
@@ -109,8 +113,11 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void updateSpeeds(double rad, double vx, double vy) {
     speeds.omegaRadiansPerSecond = rad;
+    SmartDashboard.putNumber("speedsRad", rad);
     speeds.vxMetersPerSecond = vx;
+    SmartDashboard.putNumber("speedsvx", vx);
     speeds.vyMetersPerSecond = vy;
+    SmartDashboard.putNumber("speedsvy", vy);
   }
 
   /**

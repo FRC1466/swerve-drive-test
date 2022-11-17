@@ -6,15 +6,19 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ConversionConstants;
 import frc.robot.Constants.PIDConstants;
 
 public class SwerveModule {
     private WPI_TalonFX[] motors;
+    private int m_rotationPort;
     
     /**
      * Initialize a Swerve Module
@@ -23,6 +27,7 @@ public class SwerveModule {
         int drivePort,
         int rotationPort
     ) {
+        m_rotationPort = rotationPort;
         motors = new WPI_TalonFX[] {
             new WPI_TalonFX(drivePort),
             new WPI_TalonFX(rotationPort)
@@ -67,6 +72,22 @@ public class SwerveModule {
         return new double[] {motors[0].getSelectedSensorVelocity(), motors[1].getSelectedSensorVelocity()};
     }
 
+    private double convertAngleToSetPoint(Rotation2d angle) {
+        double ticks = angle.getDegrees()+180/360 * (Math.PI/2) * ConversionConstants.CTRE_TICKS_PER_REV;
+
+        double encoderTicks = motors[0].getSelectedSensorPosition();
+
+        double error = encoderTicks - ticks;
+
+        if(error < -1024) {
+            ticks -= 2048;
+        } else if (error > 1024) {
+            ticks += 2048;
+        }
+
+        return ticks;
+    }
+
     /**
      * set motor velocity and position from a state
      * @param desiredState SwerveModuleState, unoptimized, that corresponds to the swerve module
@@ -78,10 +99,16 @@ public class SwerveModule {
                 new Rotation2d(motors[0].getSelectedSensorPosition() * ConversionConstants.CTRE_TICKS_PER_REV)
                 );
         
-        double unitsVel = state.speedMetersPerSecond / ConversionConstants.CTRE_NATIVE_TO_MPS;
+        double unitsVel = desiredState.speedMetersPerSecond / ConversionConstants.CTRE_NATIVE_TO_MPS;
         motors[0].set(TalonFXControlMode.Velocity, unitsVel);
+
+        SmartDashboard.putNumber("ANGLESTATE", desiredState.angle.getRadians());
+
+
   
-        double setpoint =  state.angle.getRadians() / ConversionConstants.CTRE_TICKS_PER_REV;
+        double setpoint = (desiredState.angle.getDegrees()+180)/360 * (Math.PI/2) * ConversionConstants.CTRE_TICKS_PER_REV; 
+
+        SmartDashboard.putNumber("SETPOINT", setpoint);
         motors[1].set(TalonFXControlMode.Position, setpoint);
     }
 
@@ -121,6 +148,9 @@ public class SwerveModule {
             motors[i].configNeutralDeadband(0.001);
             motors[i].setInverted(TalonFXInvertType.Clockwise);
         }
+        if ((m_rotationPort == 6 || m_rotationPort == 8)){
+            motors[0].setInverted(TalonFXInvertType.CounterClockwise);
+        }
     }
 
     /**
@@ -133,6 +163,7 @@ public class SwerveModule {
         motors[1].configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
         PIDConstants.PID_LOOP_IDX, 
         PIDConstants.TIMEOUT_MS);
+        
   
   
         /* Config the peak and nominal outputs */
@@ -157,10 +188,11 @@ public class SwerveModule {
         motors[1].config_kP(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.P, PIDConstants.TIMEOUT_MS);
         motors[1].config_kI(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.I, PIDConstants.TIMEOUT_MS);
         motors[1].config_kD(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.D, PIDConstants.TIMEOUT_MS);
-        motors[0].config_IntegralZone(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.IZONE, PIDConstants.TIMEOUT_MS);
+        motors[1].config_IntegralZone(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.IZONE, PIDConstants.TIMEOUT_MS);
   
         /* Hopefully make not continous */
         motors[1].configFeedbackNotContinuous(true, PIDConstants.TIMEOUT_MS);
-        motors[1].configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
+        motors[1].configIntegratedSensorAbsoluteRange(AbsoluteSensorRange.Signed_PlusMinus180);
+        motors[1].configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero);
     }
 }

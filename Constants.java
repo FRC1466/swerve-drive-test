@@ -45,7 +45,7 @@ public final class Constants {
       BACKLEFT_PORT_ROTATE = 8;
     
     public static final int
-      GYRO_PORT = 0;
+      GYRO_PORT = 20;
 
     public static final double 
       TRACKWIDTH_METERS = 0.375;
@@ -61,7 +61,7 @@ public final class Constants {
     public static double 
       LIMIT_VX = 1.0,
       LIMIT_VY = 1.0,
-      LIMIT_ROT = 1.0;
+      LIMIT_ROT = 4.0;
 
 
   }
