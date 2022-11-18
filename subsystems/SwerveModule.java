@@ -11,7 +11,6 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ConversionConstants;
 import frc.robot.Constants.PIDConstants;
@@ -73,19 +72,21 @@ public class SwerveModule {
     }
 
     private double convertAngleToSetPoint(Rotation2d angle) {
-        double ticks = angle.getDegrees()+180/360 * (Math.PI/2) * ConversionConstants.CTRE_TICKS_PER_REV;
+        double targetTicks = (angle.getDegrees()+180)/360 * (Math.PI/2) * ConversionConstants.CTRE_TICKS_PER_REV;
+        double currentTicks = motors[0].getSelectedSensorPosition() % ConversionConstants.CTRE_TICKS_PER_REV;
+        double error = currentTicks - targetTicks;
 
-        double encoderTicks = motors[0].getSelectedSensorPosition();
+        double rotation_num = Math.floor(currentTicks / ConversionConstants.CTRE_TICKS_PER_REV);
 
-        double error = encoderTicks - ticks;
-
-        if(error < -1024) {
-            ticks -= 2048;
-        } else if (error > 1024) {
-            ticks += 2048;
+        if (error < -ConversionConstants.CTRE_TICKS_PER_REV/2) {
+            targetTicks -= ConversionConstants.CTRE_TICKS_PER_REV * Math.abs(rotation_num);
+        } else if (error > ConversionConstants.CTRE_TICKS_PER_REV/2) {
+            targetTicks += ConversionConstants.CTRE_TICKS_PER_REV * Math.abs(rotation_num);
+        } else {
+            targetTicks += ConversionConstants.CTRE_TICKS_PER_REV * rotation_num;
         }
 
-        return ticks;
+        return targetTicks;
     }
 
     /**
@@ -103,11 +104,7 @@ public class SwerveModule {
         motors[0].set(TalonFXControlMode.Velocity, unitsVel);
 
         SmartDashboard.putNumber("ANGLESTATE", desiredState.angle.getRadians());
-
-
-  
-        double setpoint = (desiredState.angle.getDegrees()+180)/360 * (Math.PI/2) * ConversionConstants.CTRE_TICKS_PER_REV; 
-
+        double setpoint = convertAngleToSetPoint(desiredState.angle);
         SmartDashboard.putNumber("SETPOINT", setpoint);
         motors[1].set(TalonFXControlMode.Position, setpoint);
     }
