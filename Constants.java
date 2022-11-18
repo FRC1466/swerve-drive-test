@@ -37,12 +37,17 @@ public final class Constants {
     public static final int 
       FRONTRIGHT_PORT_DRIVE = 3,
       FRONTRIGHT_PORT_ROTATE = 4,
+      FRONTRIGHT_PORT_CANCODER = 21,
       FRONTLEFT_PORT_DRIVE = 1,
       FRONTLEFT_PORT_ROTATE = 2,
+      FRONTLEFT_PORT_CANCODER = 22,
       BACKRIGHT_PORT_DRIVE = 5,
       BACKRIGHT_PORT_ROTATE = 6,
+      BACKRIGHT_PORT_CANCODER = 23,
       BACKLEFT_PORT_DRIVE = 7,
-      BACKLEFT_PORT_ROTATE = 8;
+      BACKLEFT_PORT_ROTATE = 8,
+      BACKLEFT_PORT_CANCODER = 24;
+
     
     public static final int
       GYRO_PORT = 20;

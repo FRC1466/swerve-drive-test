@@ -22,10 +22,22 @@ public class DriveSubsystem extends SubsystemBase {
 
   private final WPI_TalonSRX gyro_motor = new WPI_TalonSRX(DriveConstants.GYRO_PORT);
   private final WPI_PigeonIMU gyro = new WPI_PigeonIMU(gyro_motor);
-  private final SwerveModule frontLeftModule = new SwerveModule(DriveConstants.FRONTLEFT_PORT_DRIVE, DriveConstants.FRONTLEFT_PORT_ROTATE);
-  private final SwerveModule frontRightModule = new SwerveModule(DriveConstants.FRONTRIGHT_PORT_DRIVE, DriveConstants.FRONTRIGHT_PORT_ROTATE);
-  private final SwerveModule backLeftModule = new SwerveModule(DriveConstants.BACKLEFT_PORT_DRIVE, DriveConstants.BACKLEFT_PORT_ROTATE);
-  private final SwerveModule backRightModule = new SwerveModule(DriveConstants.BACKRIGHT_PORT_DRIVE, DriveConstants.BACKRIGHT_PORT_ROTATE);
+  private final SwerveModule frontLeftModule = new SwerveModule(
+    DriveConstants.FRONTLEFT_PORT_DRIVE, 
+    DriveConstants.FRONTLEFT_PORT_ROTATE,
+    DriveConstants.FRONTLEFT_PORT_CANCODER);
+  private final SwerveModule frontRightModule = new SwerveModule(
+    DriveConstants.FRONTRIGHT_PORT_DRIVE, 
+    DriveConstants.FRONTRIGHT_PORT_ROTATE,
+    DriveConstants.FRONTRIGHT_PORT_CANCODER);
+  private final SwerveModule backLeftModule = new SwerveModule(
+    DriveConstants.BACKLEFT_PORT_DRIVE, 
+    DriveConstants.BACKLEFT_PORT_ROTATE,
+    DriveConstants.BACKLEFT_PORT_CANCODER);
+  private final SwerveModule backRightModule = new SwerveModule(
+    DriveConstants.BACKRIGHT_PORT_DRIVE, 
+    DriveConstants.BACKRIGHT_PORT_ROTATE,
+    DriveConstants.BACKLEFT_PORT_CANCODER);
 
 
   private ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
