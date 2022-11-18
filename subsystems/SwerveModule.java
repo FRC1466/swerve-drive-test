@@ -145,9 +145,6 @@ public class SwerveModule {
             motors[i].configNeutralDeadband(0.001);
             motors[i].setInverted(TalonFXInvertType.Clockwise);
         }
-        if ((m_rotationPort == 6 || m_rotationPort == 8)){
-            motors[0].setInverted(TalonFXInvertType.CounterClockwise);
-        }
     }
 
     /**
