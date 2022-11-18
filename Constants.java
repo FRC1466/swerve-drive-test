@@ -19,7 +19,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 public final class Constants {
   public static final class ConversionConstants {
     public static final double
-      GEAR_RATIO = 8.14,
+      GEAR_RATIO = 8.14 * Math.PI/2,
       CTRE_TICKS =  2048,
       CTRE_TICKS_PER_REV = CTRE_TICKS * GEAR_RATIO,
       WHEEL_DIAMETER = 1.975*2, //inches
@@ -37,16 +37,16 @@ public final class Constants {
     public static final int 
       FRONTRIGHT_PORT_DRIVE = 3,
       FRONTRIGHT_PORT_ROTATE = 4,
-      FRONTRIGHT_PORT_CANCODER = 21,
+      FRONTRIGHT_PORT_CANCODER = 10,
       FRONTLEFT_PORT_DRIVE = 1,
       FRONTLEFT_PORT_ROTATE = 2,
-      FRONTLEFT_PORT_CANCODER = 22,
+      FRONTLEFT_PORT_CANCODER = 9,
       BACKRIGHT_PORT_DRIVE = 5,
       BACKRIGHT_PORT_ROTATE = 6,
-      BACKRIGHT_PORT_CANCODER = 23,
+      BACKRIGHT_PORT_CANCODER = 11,
       BACKLEFT_PORT_DRIVE = 7,
       BACKLEFT_PORT_ROTATE = 8,
-      BACKLEFT_PORT_CANCODER = 24;
+      BACKLEFT_PORT_CANCODER = 12;
 
     
     public static final int
@@ -64,8 +64,8 @@ public final class Constants {
     // Drive limiters
 
     public static double 
-      LIMIT_VX = 1.0,
-      LIMIT_VY = 1.0,
+      LIMIT_VX = 0.5,
+      LIMIT_VY = 0.5,
       LIMIT_ROT = 4.0;
 
 

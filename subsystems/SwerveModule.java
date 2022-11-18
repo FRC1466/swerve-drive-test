@@ -19,6 +19,7 @@ import frc.robot.Constants.PIDConstants;
 public class SwerveModule {
     private WPI_TalonFX[] motors;
     private WPI_CANCoder cancoder;
+    private int m_cancoderPort;
     
     /**
      * Initialize a Swerve Module
@@ -33,12 +34,26 @@ public class SwerveModule {
             new WPI_TalonFX(rotationPort)
         };
         cancoder = new WPI_CANCoder(cancoderPort);
+        m_cancoderPort = cancoderPort;
 
         initializeMotors();
         initializeMotorsPID();
         initializeCancoder();
-        resetAngleEncoder(0.0);
+        resetAngleEncoder(cancoder.getAbsolutePosition()/360 * ConversionConstants.CTRE_TICKS_PER_REV);
         resetDriveEncoder(0.0);
+
+        if (m_cancoderPort == 10) {
+            resetAngleEncoder((cancoder.getAbsolutePosition()+45+180)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
+        }
+        if (m_cancoderPort == 11) {
+            resetAngleEncoder((cancoder.getAbsolutePosition()-45)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
+        }
+        if (m_cancoderPort == 12) {
+            resetAngleEncoder((cancoder.getAbsolutePosition()-45)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
+        }
+        if (m_cancoderPort == 9) {
+            resetAngleEncoder((cancoder.getAbsolutePosition()+45)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
+        }
     }
 
     /**
@@ -81,18 +96,25 @@ public class SwerveModule {
     }
 
     private double convertAngleToSetPoint(Rotation2d angle) {
-        double targetTicks = (angle.getDegrees()+180)/360 * (Math.PI/2) * ConversionConstants.CTRE_TICKS_PER_REV;
+        double targetTicks = (angle.getDegrees()+180)/360 * ConversionConstants.CTRE_TICKS_PER_REV;
         double currentTicks = motors[0].getSelectedSensorPosition() % ConversionConstants.CTRE_TICKS_PER_REV;
         double error = currentTicks - targetTicks;
+        double rotations = 0;
+        if (motors[0].getSelectedSensorPosition() >= 0) {
+            rotations = Math.floor(motors[0].getSelectedSensorPosition() / ConversionConstants.CTRE_TICKS_PER_REV);
+        } else {
+            rotations = Math.ceil(motors[0].getSelectedSensorPosition() / ConversionConstants.CTRE_TICKS_PER_REV);
+        }
+        
 
         if (error < -ConversionConstants.CTRE_TICKS_PER_REV/2) {
             targetTicks -= ConversionConstants.CTRE_TICKS_PER_REV;
-            resetAngleEncoder(getCancoderAngle().getDegrees()/360 * ConversionConstants.CTRE_TICKS_PER_REV);
+            // resetAngleEncoder(getCancoderAngle().getDegrees()/360 * ConversionConstants.CTRE_TICKS_PER_REV);
         } else if (error > ConversionConstants.CTRE_TICKS_PER_REV/2) {
-            targetTicks += ConversionConstants.CTRE_TICKS_PER_REV;
-            resetAngleEncoder(getCancoderAngle().getDegrees()/360 * ConversionConstants.CTRE_TICKS_PER_REV);
+            targetTicks += ConversionConstants.CTRE_TICKS_PER_REV; 
+            // resetAngleEncoder(getCancoderAngle().getDegrees()/360 * ConversionConstants.CTRE_TICKS_PER_REV);
         } else {
-            targetTicks += ConversionConstants.CTRE_TICKS_PER_REV;
+            targetTicks += ConversionConstants.CTRE_TICKS_PER_REV * 0;
         }
 
         return targetTicks;
@@ -108,11 +130,11 @@ public class SwerveModule {
                 desiredState, 
                 Rotation2d.fromDegrees(getCancoderAngle().getDegrees()));
         
-        double unitsVel = state.speedMetersPerSecond / ConversionConstants.CTRE_NATIVE_TO_MPS;
+        double unitsVel = desiredState.speedMetersPerSecond / ConversionConstants.CTRE_NATIVE_TO_MPS;
         motors[0].set(TalonFXControlMode.Velocity, unitsVel);
 
-        SmartDashboard.putNumber("ANGLESTATE", state.angle.getRadians());
-        double setpoint = convertAngleToSetPoint(state.angle);
+        SmartDashboard.putNumber("ANGLESTATE", desiredState.angle.getRadians());
+        double setpoint = (desiredState.angle.getDegrees()+180)/360 * ConversionConstants.CTRE_TICKS_PER_REV;
         SmartDashboard.putNumber("SETPOINT", setpoint);
         motors[1].set(TalonFXControlMode.Position, setpoint);
     }
@@ -202,9 +224,9 @@ public class SwerveModule {
 
     }
     private void initializeCancoder() {
-        cancoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
+        cancoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
         cancoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
-        cancoder.configMagnetOffset(0);
+        cancoder.setPositionToAbsolute();
         cancoder.configSensorDirection(true);
     }
 }
