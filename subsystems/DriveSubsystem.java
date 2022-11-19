@@ -55,6 +55,7 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
     gyro.reset();
     initializePIDUpdate();
+    SmartDashboard.putBoolean("is360BarrierFix", false);
   }
   
   /**

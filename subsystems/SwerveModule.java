@@ -120,10 +120,14 @@ public class SwerveModule {
         motors[0].set(TalonFXControlMode.Velocity, unitsVel);
 
         SmartDashboard.putNumber("ANGLESTATE", desiredState.angle.getRadians());
-        double setpoint = convertAngleToSetPoint(
-            getPosition()[1]/ConversionConstants.CTRE_TICKS_PER_REV *2*Math.PI, 
-            desiredState.angle.getRadians());
-        // (desiredState.angle.getDegrees()+180)/360 * ConversionConstants.CTRE_TICKS_PER_REV;
+
+        double setpoint = (desiredState.angle.getDegrees()+180)/360 * ConversionConstants.CTRE_TICKS_PER_REV;
+        if (SmartDashboard.getBoolean("is360BarrierFix", false)) {
+            setpoint = convertAngleToSetPoint(
+                getPosition()[1]/ConversionConstants.CTRE_TICKS_PER_REV *2*Math.PI, 
+                desiredState.angle.getRadians());
+        }
+
         SmartDashboard.putNumber("SETPOINT", setpoint);
         motors[1].set(TalonFXControlMode.Position, setpoint);
     }

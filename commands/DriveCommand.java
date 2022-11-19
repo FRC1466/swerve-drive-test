@@ -97,5 +97,14 @@ public class DriveCommand extends CommandBase {
         m_drive();
         updateSmartDashboard();
         updatePID();
+        m_drive.resetAngleByCancoderOffset(
+            SmartDashboard.getNumberArray("gyro offsets", 
+                new double[] {
+                    DriveConstants.FRONTLEFT_OFFSET,
+                    DriveConstants.FRONTRIGHT_OFFSET,
+                    DriveConstants.BACKLEFT_OFFSET,
+                    DriveConstants.BACKRIGHT_OFFSET
+                })
+        );
     }
 }
