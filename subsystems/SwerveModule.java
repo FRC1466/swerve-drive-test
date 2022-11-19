@@ -19,7 +19,6 @@ import frc.robot.Constants.PIDConstants;
 public class SwerveModule {
     private WPI_TalonFX[] motors;
     private WPI_CANCoder cancoder;
-    private int m_cancoderPort;
     
     /**
      * Initialize a Swerve Module
@@ -27,33 +26,22 @@ public class SwerveModule {
     public SwerveModule(
         int drivePort,
         int rotationPort,
-        int cancoderPort
+        int cancoderPort,
+        int cancoderOffset
     ) {
         motors = new WPI_TalonFX[] {
             new WPI_TalonFX(drivePort),
             new WPI_TalonFX(rotationPort)
         };
         cancoder = new WPI_CANCoder(cancoderPort);
-        m_cancoderPort = cancoderPort;
+
 
         initializeMotors();
         initializeMotorsPID();
         initializeCancoder();
-        resetAngleEncoder(cancoder.getAbsolutePosition()/360 * ConversionConstants.CTRE_TICKS_PER_REV);
+        resetAngleEncoder((cancoder.getAbsolutePosition()+cancoderOffset)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
         resetDriveEncoder(0.0);
-
-        if (m_cancoderPort == 10) {
-            resetAngleEncoder((cancoder.getAbsolutePosition()+45+180)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
-        }
-        if (m_cancoderPort == 11) {
-            resetAngleEncoder((cancoder.getAbsolutePosition()-45)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
-        }
-        if (m_cancoderPort == 12) {
-            resetAngleEncoder((cancoder.getAbsolutePosition()-45)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
-        }
-        if (m_cancoderPort == 9) {
-            resetAngleEncoder((cancoder.getAbsolutePosition()+45)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
-        }
+        cancoder.setPosition(cancoder.getAbsolutePosition()+cancoderOffset);
     }
 
     /**
@@ -84,7 +72,7 @@ public class SwerveModule {
     }
 
     public Rotation2d getCancoderAngle() {
-        return Rotation2d.fromDegrees(cancoder.getAbsolutePosition());
+        return Rotation2d.fromDegrees(cancoder.getPosition());
     }
 
     /**
@@ -95,29 +83,27 @@ public class SwerveModule {
         return new double[] {motors[0].getSelectedSensorVelocity(), motors[1].getSelectedSensorVelocity()};
     }
 
-    private double convertAngleToSetPoint(Rotation2d angle) {
-        double targetTicks = (angle.getDegrees()+180)/360 * ConversionConstants.CTRE_TICKS_PER_REV;
-        double currentTicks = motors[0].getSelectedSensorPosition() % ConversionConstants.CTRE_TICKS_PER_REV;
-        double error = currentTicks - targetTicks;
-        double rotations = 0;
-        if (motors[0].getSelectedSensorPosition() >= 0) {
-            rotations = Math.floor(motors[0].getSelectedSensorPosition() / ConversionConstants.CTRE_TICKS_PER_REV);
-        } else {
-            rotations = Math.ceil(motors[0].getSelectedSensorPosition() / ConversionConstants.CTRE_TICKS_PER_REV);
-        }
-        
+    /**
+     * @param currentAngle        what the controller currently reads (radians)
+     * @param targetAngleSetpoint the desired angle (radians)
+     * @return the target angle in controller's scope (radians)
+     */
+    private double convertAngleToSetPoint(double currentAngle, double targetAngleSetpoint) {
+        targetAngleSetpoint = Math.IEEEremainder(targetAngleSetpoint, Math.PI * 2);
 
-        if (error < -ConversionConstants.CTRE_TICKS_PER_REV/2) {
-            targetTicks -= ConversionConstants.CTRE_TICKS_PER_REV;
-            // resetAngleEncoder(getCancoderAngle().getDegrees()/360 * ConversionConstants.CTRE_TICKS_PER_REV);
-        } else if (error > ConversionConstants.CTRE_TICKS_PER_REV/2) {
-            targetTicks += ConversionConstants.CTRE_TICKS_PER_REV; 
-            // resetAngleEncoder(getCancoderAngle().getDegrees()/360 * ConversionConstants.CTRE_TICKS_PER_REV);
-        } else {
-            targetTicks += ConversionConstants.CTRE_TICKS_PER_REV * 0;
+        double remainder = currentAngle % (Math.PI * 2);
+        double adjustedAngleSetpoint = targetAngleSetpoint + (currentAngle - remainder);
+
+        // We don't want to rotate over 180 degrees, so just rotate the other way (add a
+        // full rotation)
+        if (adjustedAngleSetpoint - currentAngle > Math.PI) {
+            adjustedAngleSetpoint -= Math.PI * 2;
+        } else if (adjustedAngleSetpoint - currentAngle < -Math.PI) {
+            adjustedAngleSetpoint += Math.PI * 2;
         }
 
-        return targetTicks;
+        return adjustedAngleSetpoint;
+
     }
 
     /**
@@ -128,13 +114,16 @@ public class SwerveModule {
         SwerveModuleState state =
             SwerveModuleState.optimize(
                 desiredState, 
-                Rotation2d.fromDegrees(getCancoderAngle().getDegrees()));
+                new Rotation2d(getCancoderAngle().getRadians()));
         
         double unitsVel = desiredState.speedMetersPerSecond / ConversionConstants.CTRE_NATIVE_TO_MPS;
         motors[0].set(TalonFXControlMode.Velocity, unitsVel);
 
         SmartDashboard.putNumber("ANGLESTATE", desiredState.angle.getRadians());
-        double setpoint = (desiredState.angle.getDegrees()+180)/360 * ConversionConstants.CTRE_TICKS_PER_REV;
+        double setpoint = convertAngleToSetPoint(
+            getPosition()[1]/ConversionConstants.CTRE_TICKS_PER_REV *2*Math.PI, 
+            desiredState.angle.getRadians());
+        // (desiredState.angle.getDegrees()+180)/360 * ConversionConstants.CTRE_TICKS_PER_REV;
         SmartDashboard.putNumber("SETPOINT", setpoint);
         motors[1].set(TalonFXControlMode.Position, setpoint);
     }

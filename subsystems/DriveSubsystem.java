@@ -25,19 +25,23 @@ public class DriveSubsystem extends SubsystemBase {
   private final SwerveModule frontLeftModule = new SwerveModule(
     DriveConstants.FRONTLEFT_PORT_DRIVE, 
     DriveConstants.FRONTLEFT_PORT_ROTATE,
-    DriveConstants.FRONTLEFT_PORT_CANCODER);
+    DriveConstants.FRONTLEFT_PORT_CANCODER,
+    DriveConstants.FRONTLEFT_OFFSET);
   private final SwerveModule frontRightModule = new SwerveModule(
     DriveConstants.FRONTRIGHT_PORT_DRIVE, 
     DriveConstants.FRONTRIGHT_PORT_ROTATE,
-    DriveConstants.FRONTRIGHT_PORT_CANCODER);
+    DriveConstants.FRONTRIGHT_PORT_CANCODER,
+    DriveConstants.FRONTRIGHT_OFFSET);
   private final SwerveModule backLeftModule = new SwerveModule(
     DriveConstants.BACKLEFT_PORT_DRIVE, 
     DriveConstants.BACKLEFT_PORT_ROTATE,
-    DriveConstants.BACKLEFT_PORT_CANCODER);
+    DriveConstants.BACKLEFT_PORT_CANCODER,
+    DriveConstants.BACKLEFT_OFFSET);
   private final SwerveModule backRightModule = new SwerveModule(
     DriveConstants.BACKRIGHT_PORT_DRIVE, 
     DriveConstants.BACKRIGHT_PORT_ROTATE,
-    DriveConstants.BACKLEFT_PORT_CANCODER);
+    DriveConstants.BACKRIGHT_PORT_CANCODER,
+    DriveConstants.BACKRIGHT_OFFSET);
 
 
   private ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
