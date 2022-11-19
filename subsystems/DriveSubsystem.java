@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.PIDConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -53,6 +54,7 @@ public class DriveSubsystem extends SubsystemBase {
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     gyro.reset();
+    initializePIDUpdate();
   }
   
   /**
@@ -156,7 +158,7 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * update PID in the module substates from constants
    */
-  public void updatePID() {
+  public void updatePIDConfigs() {
     frontLeftModule.updatePID();
     frontRightModule.updatePID();
     backLeftModule.updatePID();
@@ -208,6 +210,36 @@ public class DriveSubsystem extends SubsystemBase {
       backRightModule.getVelocity()
     };
   }
+
+  public void updatePIDConstants() {
+    PIDConstants.DRIVE_GAINS_POSITION.P = SmartDashboard.getNumber("P_pos", 0);
+    PIDConstants.DRIVE_GAINS_POSITION.I = SmartDashboard.getNumber("I_pos", 0);
+    PIDConstants.DRIVE_GAINS_POSITION.D = SmartDashboard.getNumber("D_pos", 0);
+    PIDConstants.DRIVE_GAINS_POSITION.F = SmartDashboard.getNumber("F_pos", 0);
+    PIDConstants.DRIVE_GAINS_POSITION.IZONE = SmartDashboard.getNumber("Izone_pos", 0);
+
+    PIDConstants.DRIVE_GAINS_VELOCITY.P = SmartDashboard.getNumber("P_vel", 0);
+    PIDConstants.DRIVE_GAINS_VELOCITY.I = SmartDashboard.getNumber("I_vel", 0);
+    PIDConstants.DRIVE_GAINS_VELOCITY.D = SmartDashboard.getNumber("D_vel", 0);
+    PIDConstants.DRIVE_GAINS_VELOCITY.F = SmartDashboard.getNumber("F_vel", 0);
+    PIDConstants.DRIVE_GAINS_VELOCITY.IZONE = SmartDashboard.getNumber("Izone_vel", 0);
+  }
+
+  private void initializePIDUpdate() {
+    SmartDashboard.putNumber("P_pos", PIDConstants.DRIVE_GAINS_POSITION.P);
+    SmartDashboard.putNumber("I_pos", PIDConstants.DRIVE_GAINS_POSITION.I);
+    SmartDashboard.putNumber("D_pos", PIDConstants.DRIVE_GAINS_POSITION.D);
+    SmartDashboard.putNumber("F_pos", PIDConstants.DRIVE_GAINS_POSITION.F);
+    SmartDashboard.putNumber("Izone_pos", PIDConstants.DRIVE_GAINS_POSITION.IZONE);
+
+    SmartDashboard.putNumber("P_vel", PIDConstants.DRIVE_GAINS_VELOCITY.P);
+    SmartDashboard.putNumber("I_vel", PIDConstants.DRIVE_GAINS_VELOCITY.I);
+    SmartDashboard.putNumber("D_vel", PIDConstants.DRIVE_GAINS_VELOCITY.D);
+    SmartDashboard.putNumber("F_vel", PIDConstants.DRIVE_GAINS_VELOCITY.F);
+    SmartDashboard.putNumber("Izone_vel", PIDConstants.DRIVE_GAINS_VELOCITY.IZONE);
+  } 
+
+
 
   @Override
   public void periodic() {

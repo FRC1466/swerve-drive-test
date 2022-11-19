@@ -84,33 +84,8 @@ public class DriveCommand extends CommandBase {
      * Update PID system from SmartDashboard for quick and easy tuning
      */
     private void updatePID() {
-        /* 
-        SmartDashboard.putNumber("P_pos", PIDConstants.DRIVE_GAINS_POSITION.P);
-        SmartDashboard.putNumber("I_pos", PIDConstants.DRIVE_GAINS_POSITION.I);
-        SmartDashboard.putNumber("D_pos", PIDConstants.DRIVE_GAINS_POSITION.D);
-        SmartDashboard.putNumber("F_pos", PIDConstants.DRIVE_GAINS_POSITION.F);
-        SmartDashboard.putNumber("Izone_pos", PIDConstants.DRIVE_GAINS_POSITION.IZONE);
-
-        SmartDashboard.putNumber("P_vel", PIDConstants.DRIVE_GAINS_VELOCITY.P);
-        SmartDashboard.putNumber("I_vel", PIDConstants.DRIVE_GAINS_VELOCITY.I);
-        SmartDashboard.putNumber("D_vel", PIDConstants.DRIVE_GAINS_VELOCITY.D);
-        SmartDashboard.putNumber("F_vel", PIDConstants.DRIVE_GAINS_VELOCITY.F);
-        SmartDashboard.putNumber("Izone_vel", PIDConstants.DRIVE_GAINS_VELOCITY.IZONE); */
-
-        PIDConstants.DRIVE_GAINS_POSITION.P = SmartDashboard.getNumber("P_pos", 0);
-        PIDConstants.DRIVE_GAINS_POSITION.I = SmartDashboard.getNumber("I_pos", 0);
-        PIDConstants.DRIVE_GAINS_POSITION.D = SmartDashboard.getNumber("D_pos", 0);
-        PIDConstants.DRIVE_GAINS_POSITION.F = SmartDashboard.getNumber("F_pos", 0);
-        PIDConstants.DRIVE_GAINS_POSITION.IZONE = SmartDashboard.getNumber("Izone_pos", 0);
-
-        PIDConstants.DRIVE_GAINS_VELOCITY.P = SmartDashboard.getNumber("P_vel", 0);
-        PIDConstants.DRIVE_GAINS_VELOCITY.I = SmartDashboard.getNumber("I_vel", 0);
-        PIDConstants.DRIVE_GAINS_VELOCITY.D = SmartDashboard.getNumber("D_vel", 0);
-        PIDConstants.DRIVE_GAINS_VELOCITY.F = SmartDashboard.getNumber("F_vel", 0);
-        PIDConstants.DRIVE_GAINS_VELOCITY.IZONE = SmartDashboard.getNumber("Izone_vel", 0);
-
-        m_drive.updatePID();
-
+        m_drive.updatePIDConstants();
+        m_drive.updatePIDConfigs();
     }
     
 
