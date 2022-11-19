@@ -56,6 +56,13 @@ public class DriveSubsystem extends SubsystemBase {
     gyro.reset();
     initializePIDUpdate();
     SmartDashboard.putBoolean("is360BarrierFix", false);
+    SmartDashboard.putNumberArray("gyro offsets", 
+      new double[] {
+        DriveConstants.FRONTLEFT_OFFSET,
+        DriveConstants.FRONTRIGHT_OFFSET,
+        DriveConstants.BACKLEFT_OFFSET,
+        DriveConstants.BACKRIGHT_OFFSET
+      });
   }
   
   /**
@@ -112,6 +119,13 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void updateSpeedsTrajectory(double time, RamseteController ramsete, Trajectory trajectory) {
     speeds = ramsete.calculate(m_odometry.getPoseMeters(), trajectory.sample(time));
+  }
+
+  public void resetAngleByCancoderOffset(double[] list) {
+    frontLeftModule.resetAngleEncoder(list[0]);
+    frontRightModule.resetAngleEncoder(list[1]);
+    backLeftModule.resetAngleEncoder(list[2]);
+    backRightModule.resetAngleEncoder(list[3]);
   }
 
   /**

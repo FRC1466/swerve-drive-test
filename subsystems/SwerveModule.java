@@ -89,7 +89,7 @@ public class SwerveModule {
      * @return the target angle in controller's scope (radians)
      */
     private double convertAngleToSetPoint(double currentAngle, double targetAngleSetpoint) {
-        targetAngleSetpoint = Math.IEEEremainder(targetAngleSetpoint, Math.PI * 2);
+        targetAngleSetpoint = Math.IEEEremainder(targetAngleSetpoint, Math.PI * 2); //this function has a very specific usecase lol
 
         double remainder = currentAngle % (Math.PI * 2);
         double adjustedAngleSetpoint = targetAngleSetpoint + (currentAngle - remainder);
@@ -137,6 +137,11 @@ public class SwerveModule {
      */
     public void resetAngleEncoder(double i) {
         motors[1].setSelectedSensorPosition(i);
+    }
+
+    public void resetAngleByCancoderOffset(double i) {
+        resetAngleEncoder((cancoder.getAbsolutePosition()+i)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
+        cancoder.setPosition(cancoder.getAbsolutePosition()+i);
     }
 
     public void resetDriveEncoder(double i) {
