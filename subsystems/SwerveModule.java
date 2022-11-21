@@ -12,6 +12,7 @@ import com.ctre.phoenix.sensors.WPI_CANCoder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ConversionConstants;
 import frc.robot.Constants.PIDConstants;
@@ -19,6 +20,10 @@ import frc.robot.Constants.PIDConstants;
 public class SwerveModule {
     private WPI_TalonFX[] motors;
     private WPI_CANCoder cancoder;
+    private int m_cancoderPort;
+    private int m_rotationPort;
+    private boolean m_isRotationOffset;
+    private TalonFXInvertType m_RotInverted;
     
     /**
      * Initialize a Swerve Module
@@ -27,21 +32,29 @@ public class SwerveModule {
         int drivePort,
         int rotationPort,
         int cancoderPort,
-        int cancoderOffset
+        int cancoderOffset,
+        boolean isRotationOffset,
+        TalonFXInvertType rotInverted
     ) {
         motors = new WPI_TalonFX[] {
             new WPI_TalonFX(drivePort),
             new WPI_TalonFX(rotationPort)
-        };
+        }; 
+
         cancoder = new WPI_CANCoder(cancoderPort);
+
+        m_cancoderPort = cancoderPort;
+        m_isRotationOffset = isRotationOffset;
+        m_rotationPort = rotationPort;
+        m_RotInverted = rotInverted;
 
 
         initializeMotors();
         initializeMotorsPID();
         initializeCancoder();
-        resetAngleEncoder((cancoder.getAbsolutePosition()+cancoderOffset)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
+        // resetAngleEncoder((cancoder.getAbsolutePosition()+cancoderOffset)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
         resetDriveEncoder(0.0);
-        cancoder.setPosition(cancoder.getAbsolutePosition()+cancoderOffset);
+        // cancoder.setPosition(cancoder.getAbsolutePosition()+cancoderOffset);
     }
 
     /**
@@ -72,7 +85,8 @@ public class SwerveModule {
     }
 
     public Rotation2d getCancoderAngle() {
-        return Rotation2d.fromDegrees(cancoder.getPosition());
+        //- return Rotation2d.fromDegrees(cancoder.getPosition());
+        return Rotation2d.fromDegrees(0);
     }
 
     /**
@@ -114,19 +128,17 @@ public class SwerveModule {
         SwerveModuleState state =
             SwerveModuleState.optimize(
                 desiredState, 
-                new Rotation2d(getCancoderAngle().getRadians()));
+                new Rotation2d(0));
         
         double unitsVel = desiredState.speedMetersPerSecond / ConversionConstants.CTRE_NATIVE_TO_MPS;
         motors[0].set(TalonFXControlMode.Velocity, unitsVel);
 
         SmartDashboard.putNumber("ANGLESTATE", desiredState.angle.getRadians());
 
-        double setpoint = (desiredState.angle.getDegrees()+180)/360 * ConversionConstants.CTRE_TICKS_PER_REV;
-        if (SmartDashboard.getBoolean("is360BarrierFix", false)) {
-            setpoint = convertAngleToSetPoint(
-                getPosition()[1]/ConversionConstants.CTRE_TICKS_PER_REV *2*Math.PI, 
-                desiredState.angle.getRadians());
-        }
+        double setpoint = convertAngleToSetPoint(
+            (getPosition()[1]/ConversionConstants.CTRE_TICKS_PER_REV) *2*Math.PI, 
+            desiredState.angle.getRadians()) / (2*Math.PI) * ConversionConstants.CTRE_TICKS_PER_REV;
+        // setpoint = desiredState.angle.getRadians() / (2*Math.PI) * ConversionConstants.CTRE_TICKS_PER_REV;
 
         SmartDashboard.putNumber("SETPOINT", setpoint);
         motors[1].set(TalonFXControlMode.Position, setpoint);
@@ -140,8 +152,10 @@ public class SwerveModule {
     }
 
     public void resetAngleByCancoderOffset(double i) {
-        resetAngleEncoder((cancoder.getAbsolutePosition()+i)/360 * ConversionConstants.CTRE_TICKS_PER_REV);
-        cancoder.setPosition(cancoder.getAbsolutePosition()+i);
+        SmartDashboard.putNumber("abspos", cancoder.getAbsolutePosition());
+        System.out.println(cancoder.getAbsolutePosition());
+        resetAngleEncoder((cancoder.getAbsolutePosition()));
+        cancoder.setPosition(cancoder.getAbsolutePosition());
     }
 
     public void resetDriveEncoder(double i) {
@@ -165,6 +179,10 @@ public class SwerveModule {
         motors[0].config_IntegralZone(PIDConstants.PID_LOOP_IDX, PIDConstants.DRIVE_GAINS_POSITION.IZONE, PIDConstants.TIMEOUT_MS);
     }
 
+    public void changeDriveMotorInversion(boolean i) {
+        motors[1].setInverted(i);
+    }
+
     /**
      * initialize motor configs
      */
@@ -174,8 +192,10 @@ public class SwerveModule {
             motors[i].set(ControlMode.PercentOutput, 0);
             motors[i].setNeutralMode(NeutralMode.Brake);
             motors[i].configNeutralDeadband(0.001);
-            motors[i].setInverted(TalonFXInvertType.Clockwise);
+            motors[0].setInverted(m_RotInverted);
         }
+        
+        motors[1].setInverted(TalonFXInvertType.CounterClockwise);
     }
 
     /**

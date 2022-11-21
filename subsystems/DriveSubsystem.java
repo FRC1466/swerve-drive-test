@@ -16,6 +16,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PIDConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
@@ -27,22 +28,30 @@ public class DriveSubsystem extends SubsystemBase {
     DriveConstants.FRONTLEFT_PORT_DRIVE, 
     DriveConstants.FRONTLEFT_PORT_ROTATE,
     DriveConstants.FRONTLEFT_PORT_CANCODER,
-    DriveConstants.FRONTLEFT_OFFSET);
+    DriveConstants.FRONTLEFT_OFFSET,
+    true,
+    TalonFXInvertType.CounterClockwise);
   private final SwerveModule frontRightModule = new SwerveModule(
     DriveConstants.FRONTRIGHT_PORT_DRIVE, 
     DriveConstants.FRONTRIGHT_PORT_ROTATE,
     DriveConstants.FRONTRIGHT_PORT_CANCODER,
-    DriveConstants.FRONTRIGHT_OFFSET);
+    DriveConstants.FRONTRIGHT_OFFSET,
+    true,
+    TalonFXInvertType.CounterClockwise);
   private final SwerveModule backLeftModule = new SwerveModule(
     DriveConstants.BACKLEFT_PORT_DRIVE, 
     DriveConstants.BACKLEFT_PORT_ROTATE,
     DriveConstants.BACKLEFT_PORT_CANCODER,
-    DriveConstants.BACKLEFT_OFFSET);
+    DriveConstants.BACKLEFT_OFFSET,
+    true,
+    TalonFXInvertType.CounterClockwise);
   private final SwerveModule backRightModule = new SwerveModule(
     DriveConstants.BACKRIGHT_PORT_DRIVE, 
     DriveConstants.BACKRIGHT_PORT_ROTATE,
     DriveConstants.BACKRIGHT_PORT_CANCODER,
-    DriveConstants.BACKRIGHT_OFFSET);
+    DriveConstants.BACKRIGHT_OFFSET,
+    true,
+    TalonFXInvertType.CounterClockwise);
 
 
   private ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
@@ -51,6 +60,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final Pose2d initialPose = new Pose2d(5.0, 13.5, new Rotation2d(0));
   private SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(DriveConstants.KINEMATICS, getGyroHeading(), initialPose);
 
+  double[] help = new double[] {};
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     gyro.reset();
@@ -63,6 +73,10 @@ public class DriveSubsystem extends SubsystemBase {
         DriveConstants.BACKLEFT_OFFSET,
         DriveConstants.BACKRIGHT_OFFSET
       });
+        SmartDashboard.putNumber("0 cc", 0.0);
+        SmartDashboard.putNumber("1 cc", 0.0);
+        SmartDashboard.putNumber("2 cc", 0.0);
+        SmartDashboard.putNumber("3 cc", 0.0);
   }
   
   /**
@@ -111,6 +125,13 @@ public class DriveSubsystem extends SubsystemBase {
       backLeftModule.getState(), 
       backRightModule.getState()
       );
+  }
+
+  public void changeMotorInversion(boolean[] i) {
+      frontLeftModule.changeDriveMotorInversion(i[0]);
+      frontRightModule.changeDriveMotorInversion(i[1]);
+      backLeftModule.changeDriveMotorInversion(i[2]);
+      backRightModule.changeDriveMotorInversion(i[3]);
   }
 
   /**

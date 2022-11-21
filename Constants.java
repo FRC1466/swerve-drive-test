@@ -48,7 +48,7 @@ public final class Constants {
       BACKRIGHT_PORT_DRIVE = 5,
       BACKRIGHT_PORT_ROTATE = 6,
       BACKRIGHT_PORT_CANCODER = 11,
-      BACKRIGHT_OFFSET = -45,
+      BACKRIGHT_OFFSET = -10,
 
       BACKLEFT_PORT_DRIVE = 7,
       BACKLEFT_PORT_ROTATE = 8,
@@ -67,12 +67,11 @@ public final class Constants {
       new Translation2d(DriveConstants.TRACKWIDTH_METERS/2, -DriveConstants.TRACKWIDTH_METERS/2), //frontright
       new Translation2d(-DriveConstants.TRACKWIDTH_METERS/2, DriveConstants.TRACKWIDTH_METERS/2), //backleft
       new Translation2d(-DriveConstants.TRACKWIDTH_METERS/2, -DriveConstants.TRACKWIDTH_METERS/2)); //backright
-
     // Drive limiters
 
     public static double 
-      LIMIT_VX = 0.5,
-      LIMIT_VY = 0.5,
+      LIMIT_VX = 1.0,
+      LIMIT_VY = 1.0,
       LIMIT_ROT = 4.0;
 
 

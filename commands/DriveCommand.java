@@ -30,6 +30,15 @@ public class DriveCommand extends CommandBase {
         addRequirements(m_drive);
         m_controller = controller;
         m_isFieldRelative = isFieldRelative;
+
+         /* m_drive.resetAngleByCancoderOffset(
+            new double[] {
+                SmartDashboard.getNumber("0 cc", 0.0),
+                SmartDashboard.getNumber("1 cc", 0.0),
+                SmartDashboard.getNumber("2 cc", 0.0),
+                SmartDashboard.getNumber("3 cc", 0.0),
+            }
+        ); */
     }
 
     /**
@@ -37,8 +46,8 @@ public class DriveCommand extends CommandBase {
      */
     private void m_drive() {
         vx = m_controller.getLeftX() * DriveConstants.LIMIT_VX;
-        vy = m_controller.getLeftY() * DriveConstants.LIMIT_VY;
-        rot = m_controller.getRightX() * DriveConstants.LIMIT_ROT;
+        vy = -m_controller.getLeftY() * DriveConstants.LIMIT_VY;
+        rot = -m_controller.getRightX() * DriveConstants.LIMIT_ROT;
 
         if (!(Math.abs(vx) > 0.15)) {
             vx = 0;
@@ -90,21 +99,15 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void initialize() {
+    
     }
 
     @Override
     public void execute() {
         m_drive();
         updateSmartDashboard();
-        updatePID();
-        m_drive.resetAngleByCancoderOffset(
-            SmartDashboard.getNumberArray("gyro offsets", 
-                new double[] {
-                    DriveConstants.FRONTLEFT_OFFSET,
-                    DriveConstants.FRONTRIGHT_OFFSET,
-                    DriveConstants.BACKLEFT_OFFSET,
-                    DriveConstants.BACKRIGHT_OFFSET
-                })
-        );
+        // updatePID();
+        
+        
     }
 }
