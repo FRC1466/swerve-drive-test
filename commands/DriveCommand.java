@@ -39,6 +39,10 @@ public class DriveCommand extends CommandBase {
                 SmartDashboard.getNumber("3 cc", 0.0),
             }
         ); */
+        SmartDashboard.putNumber("vx limit", DriveConstants.LIMIT_VX);
+        SmartDashboard.putNumber("vy limit", DriveConstants.LIMIT_VY); 
+        SmartDashboard.putNumber("rot limit", DriveConstants.LIMIT_ROT);
+        
     }
 
     /**
@@ -57,7 +61,7 @@ public class DriveCommand extends CommandBase {
             vy = 0;
         }
 
-        if (!(Math.abs(rot) > 0.1)) {
+        if (!(Math.abs(rot) > 0.16)) {
             rot = 0;
         }
 
@@ -78,10 +82,6 @@ public class DriveCommand extends CommandBase {
         SmartDashboard.putNumber("vx", vx);
         SmartDashboard.putNumber("vy", vy);
         SmartDashboard.putNumber("rot", rot);
-
-        SmartDashboard.putNumber("vx limit", DriveConstants.LIMIT_VX);
-        SmartDashboard.putNumber("vy limit", DriveConstants.LIMIT_VY); 
-        SmartDashboard.putNumber("rot limit", DriveConstants.LIMIT_ROT);
 
         DriveConstants.LIMIT_VX = SmartDashboard.getNumber("vx limit", DriveConstants.LIMIT_VX);
         DriveConstants.LIMIT_VY = SmartDashboard.getNumber("vy limit", DriveConstants.LIMIT_VY); 

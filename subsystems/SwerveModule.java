@@ -135,9 +135,11 @@ public class SwerveModule {
 
         SmartDashboard.putNumber("ANGLESTATE", desiredState.angle.getRadians());
 
+        double ticks = SmartDashboard.getNumber("rotation ricks", ConversionConstants.CTRE_TICKS_PER_REV);
+
         double setpoint = convertAngleToSetPoint(
-            (getPosition()[1]/ConversionConstants.CTRE_TICKS_PER_REV) *2*Math.PI, 
-            desiredState.angle.getRadians()) / (2*Math.PI) * ConversionConstants.CTRE_TICKS_PER_REV;
+            (getPosition()[1]/ticks) *2*Math.PI, 
+            desiredState.angle.getRadians()) / (2*Math.PI) * ticks;
         // setpoint = desiredState.angle.getRadians() / (2*Math.PI) * ConversionConstants.CTRE_TICKS_PER_REV;
 
         SmartDashboard.putNumber("SETPOINT", setpoint);

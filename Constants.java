@@ -19,9 +19,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 public final class Constants {
   public static final class ConversionConstants {
     public static final double
-      GEAR_RATIO = 8.14 * Math.PI/2,
+      GEAR_RATIO = 8.14 * 1.00415081 * Math.PI/2,
       CTRE_TICKS =  2048,
-      CTRE_TICKS_PER_REV = CTRE_TICKS * GEAR_RATIO,
+      CTRE_TICKS_PER_REV = CTRE_TICKS * GEAR_RATIO, // 26295
       WHEEL_DIAMETER = 1.975*2, //inches
       CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI,
       INCHES_PER_TICK = CIRCUMFERENCE / CTRE_TICKS_PER_REV,
@@ -110,7 +110,7 @@ public final class Constants {
       TIMEOUT_MS = 30;
 
     public static final Gains 
-      DRIVE_GAINS_VELOCITY  = new Gains(0.2, 0.0001, 4.0, 0,  0,  0.8),
+      DRIVE_GAINS_VELOCITY  = new Gains(0.198, 0.00085, 4.0, 0,  0,  0.8),
       DRIVE_GAINS_POSITION  = new Gains(0.05, 0.00001, 0, 0,  0,  0.6);
   }
 
