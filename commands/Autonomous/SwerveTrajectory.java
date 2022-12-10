@@ -73,12 +73,12 @@ public class SwerveTrajectory extends CommandBase {
     
     @Override
     public void initialize() {
-        
+        swerveControllerCommand.schedule();
     }
     
     @Override
     public void execute() {
-        swerveControllerCommand.schedule();
+        
     }
 
    

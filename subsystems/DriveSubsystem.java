@@ -65,7 +65,7 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
     gyro.reset();
     initializePIDUpdate();
-    SmartDashboard.putBoolean("is360BarrierFix", false);
+    
     SmartDashboard.putNumberArray("gyro offsets", 
       new double[] {
         DriveConstants.FRONTLEFT_OFFSET,

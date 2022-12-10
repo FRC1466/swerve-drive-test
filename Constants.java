@@ -70,8 +70,8 @@ public final class Constants {
     // Drive limiters
 
     public static double 
-      LIMIT_VX = 1.0,
-      LIMIT_VY = 1.0,
+      LIMIT_VX = 1.5,
+      LIMIT_VY = 1.5,
       LIMIT_ROT = 4.0;
 
 

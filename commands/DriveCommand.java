@@ -15,6 +15,7 @@ public class DriveCommand extends CommandBase {
     private double vx = 0;
     private double vy = 0;
     private double rot = 0;
+    private int PID_iter = 0;
     
     /**
      * Default command for driving
@@ -106,8 +107,11 @@ public class DriveCommand extends CommandBase {
     public void execute() {
         m_drive();
         updateSmartDashboard();
-        // updatePID();
-        
+        if (PID_iter*20 > 5000) { // 5000ms PID update time
+            updatePID();
+            PID_iter = 0;
+        }
+        PID_iter++;
         
     }
 }
