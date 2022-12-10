@@ -19,7 +19,6 @@ public class Robot extends TimedRobot {
 
   private boolean isAutoDone;
 
-  private RobotContainer m_robotContainer;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -58,7 +57,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAuto();
+    this.autonomousCommand = this.robotContainer.getAuto();
   }
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -72,8 +71,8 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
 
-    if ((m_autonomousCommand != null) && (!isAutoDone)) {
-      m_autonomousCommand.schedule();
+    if ((this.autonomousCommand != null) && (!isAutoDone)) {
+      this.autonomousCommand.schedule();
       isAutoDone = true;
     }
   }
@@ -84,8 +83,8 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+    if (this.autonomousCommand != null) {
+      this.autonomousCommand.cancel();
     }
     isAutoDone = false;
   }

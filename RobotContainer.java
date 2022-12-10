@@ -46,8 +46,8 @@ public class RobotContainer {
 
     // Configure default commands
     // Set the default drive command to split-stick arcade drive
-    m_robotDrive.setDefaultCommand(
-        m_DriveCommand
+    this.robotDrive.setDefaultCommand(
+        this.DriveCommand
     );
 
   }
