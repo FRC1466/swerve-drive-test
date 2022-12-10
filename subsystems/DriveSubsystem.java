@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.ConversionConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PIDConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -77,6 +78,7 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("1 cc", 0.0);
         SmartDashboard.putNumber("2 cc", 0.0);
         SmartDashboard.putNumber("3 cc", 0.0);
+    SmartDashboard.putNumber("rotation ricks", ConversionConstants.CTRE_TICKS_PER_REV);
   }
   
   /**
@@ -84,6 +86,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return Rotation2d of gyro
    */
   public Rotation2d getGyroHeading() {
+    SmartDashboard.putNumber("gyro rotation degrees", gyro.getRotation2d().getDegrees());
     return gyro.getRotation2d();
   }
 
