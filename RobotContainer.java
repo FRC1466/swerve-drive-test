@@ -23,14 +23,14 @@ public class RobotContainer {
   private final boolean isFieldRelative = true;
 
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final DriveSubsystem m_drive = new DriveSubsystem();
 
   private final XboxController m_driverController = new XboxController(OIConstants.DRIVER_PORT);
 
 
 
   // the default commands
-  private final DriveCommand m_DriveCommand = new DriveCommand(m_robotDrive, m_driverController, isFieldRelative);
+  private final DriveCommand m_DriveCommand = new DriveCommand(m_drive, m_driverController, isFieldRelative);
 
   
 
@@ -46,8 +46,8 @@ public class RobotContainer {
 
     // Configure default commands
     // Set the default drive command to split-stick arcade drive
-    this.robotDrive.setDefaultCommand(
-        this.DriveCommand
+    m_drive.setDefaultCommand(
+        m_DriveCommand
     );
 
   }
@@ -73,7 +73,7 @@ public class RobotContainer {
 
 
   public Command getAuto() {
-    return new ComplexAuto(m_robotDrive);
+    return new ComplexAuto(m_drive);
   }
 
 
