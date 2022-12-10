@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,9 +19,9 @@ package frc.robot;
 public final class Constants {
   public static final class ConversionConstants {
     public static final double
-      GEAR_RATIO = 8.14,
+      GEAR_RATIO = 8.14 * 1.00415081 * Math.PI/2,
       CTRE_TICKS =  2048,
-      CTRE_TICKS_PER_REV = CTRE_TICKS * GEAR_RATIO,
+      CTRE_TICKS_PER_REV = CTRE_TICKS * GEAR_RATIO, // 26295
       WHEEL_DIAMETER = 1.975*2, //inches
       CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI,
       INCHES_PER_TICK = CIRCUMFERENCE / CTRE_TICKS_PER_REV,
@@ -33,22 +37,42 @@ public final class Constants {
     public static final int 
       FRONTRIGHT_PORT_DRIVE = 3,
       FRONTRIGHT_PORT_ROTATE = 4,
+      FRONTRIGHT_PORT_CANCODER = 10,
+      FRONTRIGHT_OFFSET = 135,
+
       FRONTLEFT_PORT_DRIVE = 1,
       FRONTLEFT_PORT_ROTATE = 2,
+      FRONTLEFT_PORT_CANCODER = 9,
+      FRONTLEFT_OFFSET = 45,
+
       BACKRIGHT_PORT_DRIVE = 5,
       BACKRIGHT_PORT_ROTATE = 6,
+      BACKRIGHT_PORT_CANCODER = 11,
+      BACKRIGHT_OFFSET = -10,
+
       BACKLEFT_PORT_DRIVE = 7,
-      BACKLEFT_PORT_ROTATE = 8;
+      BACKLEFT_PORT_ROTATE = 8,
+      BACKLEFT_PORT_CANCODER = 12,
+      BACKLEFT_OFFSET = -45;
+
+    
+    public static final int
+      GYRO_PORT = 20;
 
     public static final double 
       TRACKWIDTH_METERS = 0.375;
 
+    public final static SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
+      new Translation2d(DriveConstants.TRACKWIDTH_METERS/2, DriveConstants.TRACKWIDTH_METERS/2), //frontleft
+      new Translation2d(DriveConstants.TRACKWIDTH_METERS/2, -DriveConstants.TRACKWIDTH_METERS/2), //frontright
+      new Translation2d(-DriveConstants.TRACKWIDTH_METERS/2, DriveConstants.TRACKWIDTH_METERS/2), //backleft
+      new Translation2d(-DriveConstants.TRACKWIDTH_METERS/2, -DriveConstants.TRACKWIDTH_METERS/2)); //backright
     // Drive limiters
 
-    public static final double 
-      LIMIT_VX = 1.0,
-      LIMIT_VY = 1.0,
-      LIMIT_ROT = 1.0;
+    public static double 
+      LIMIT_VX = 1.5,
+      LIMIT_VY = 1.5,
+      LIMIT_ROT = 4.0;
 
 
   }
@@ -60,6 +84,18 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
+    public static final double
+      MAX_SPEED_MPS = 3.0,
+      MAX_ACCELERATION_MPS = 2.0;
+
+    public static final Gains
+      THETA_CONTROLLER = new Gains(1, 0, 0, 0, 0, 1),
+      X_CONTROLLER = new Gains(1, 0, 0, 0, 0, 1),
+      Y_CONTROLLER = new Gains(1, 0, 0, 0, 0, 1);
+
+      public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS =
+      new TrapezoidProfile.Constraints(
+          MAX_SPEED_MPS, MAX_ACCELERATION_MPS);
 
   }
 
@@ -73,10 +109,9 @@ public final class Constants {
       PID_LOOP_IDX = 0,
       TIMEOUT_MS = 30;
 
-    //                                                    kP   	 kI    kD      kF          Iz    PeakOut
-    public final static Gains DRIVE_GAINS_VELOCITY  = new Gains(0.2, 0.0001, 4.0, 0,  0,  0.6);
-    //   0.35,0.001,0.2                                           kP: 4   	 kI    kD      kF          Iz    PeakOut
-    public final static Gains DRIVE_GAINS_POSITION  = new Gains(0.05, 0.00001, 0, 0,  0,  0.25);
+    public static final Gains 
+      DRIVE_GAINS_VELOCITY  = new Gains(0.198, 0.00085, 4.0, 0,  0,  0.8),
+      DRIVE_GAINS_POSITION  = new Gains(0.05, 0.00001, 0, 0,  0,  0.6);
   }
 
 }

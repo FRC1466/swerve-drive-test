@@ -19,17 +19,18 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems
-  private final DriveSubsystem robotDrive = new DriveSubsystem();
-  
 
-  // The driver's controller
-  XboxController driverController = new XboxController(OIConstants.DRIVER_PORT);
-  // The intake controller
-  XboxController intakeController = new XboxController(OIConstants.INTAKE_PORT);
+  private final boolean isFieldRelative = true;
+
+  // The robot's subsystems
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+
+  private final XboxController m_driverController = new XboxController(OIConstants.DRIVER_PORT);
+
+
 
   // the default commands
-  DriveCommand DriveCommand = new DriveCommand(this.robotDrive, this.driverController);
+  private final DriveCommand m_DriveCommand = new DriveCommand(m_robotDrive, m_driverController, isFieldRelative);
 
   
 
@@ -41,7 +42,6 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    // max output of drivesubsystem
     
 
     // Configure default commands
@@ -73,7 +73,7 @@ public class RobotContainer {
 
 
   public Command getAuto() {
-    return new ComplexAuto();
+    return new ComplexAuto(m_robotDrive);
   }
 
 
