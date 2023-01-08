@@ -17,7 +17,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 
 
-public class SwerveTrajectory extends CommandBase {
+public class SwerveTrajectory {
     private DriveSubsystem m_drive;
 
     private TrajectoryConfig config =
@@ -45,42 +45,38 @@ public class SwerveTrajectory extends CommandBase {
             AutoConstants.THETA_CONTROLLER.D, 
             AutoConstants.THETA_CONTROLLER_CONSTRAINTS);
 
+
     
-    SwerveTrajectory(DriveSubsystem drive) {
+    public SwerveTrajectory(DriveSubsystem drive) {
         m_drive = drive;
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
         drive.resetOdometry(exampleTrajectory.getInitialPose());
+
     }
 
-    SwerveControllerCommand swerveControllerCommand =
-        new SwerveControllerCommand(
-            exampleTrajectory,
-            m_drive::getPose, // Functional interface to feed supplier
-            DriveConstants.KINEMATICS,
+    SwerveControllerCommand m_swerveControllerCommand =
+            new SwerveControllerCommand(
+                exampleTrajectory,
+                m_drive::getPose, // Functional interface to feed supplier
+                DriveConstants.KINEMATICS,
 
-            // Position controllers
-            new PIDController(
-                AutoConstants.X_CONTROLLER.P,
-                AutoConstants.X_CONTROLLER.I, 
-                AutoConstants.X_CONTROLLER.D),
-            new PIDController(
-                AutoConstants.Y_CONTROLLER.P, 
-                AutoConstants.X_CONTROLLER.I, 
-                AutoConstants.X_CONTROLLER.D),
-            thetaController,
-            m_drive::driveFromModuleStates,
-            m_drive);
+                // Position controllers
+                new PIDController(
+                    AutoConstants.X_CONTROLLER.P,
+                    AutoConstants.X_CONTROLLER.I, 
+                    AutoConstants.X_CONTROLLER.D),
+                new PIDController(
+                    AutoConstants.Y_CONTROLLER.P, 
+                    AutoConstants.X_CONTROLLER.I, 
+                    AutoConstants.X_CONTROLLER.D),
+                thetaController,
+                m_drive::driveFromModuleStates,
+                m_drive);
     
-    @Override
-    public void initialize() {
-        swerveControllerCommand.schedule();
-    }
-    
-    @Override
-    public void execute() {
-        
-    }
 
+    public SwerveControllerCommand getCommand() {
+        return m_swerveControllerCommand;
+    }
    
     
 

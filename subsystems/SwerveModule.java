@@ -24,6 +24,7 @@ public class SwerveModule {
     private int m_rotationPort;
     private boolean m_isRotationOffset;
     private TalonFXInvertType m_RotInverted;
+    private TalonFXInvertType m_driveInverted;
     
     /**
      * Initialize a Swerve Module
@@ -34,7 +35,8 @@ public class SwerveModule {
         int cancoderPort,
         int cancoderOffset,
         boolean isRotationOffset,
-        TalonFXInvertType rotInverted
+        TalonFXInvertType rotInverted,
+        TalonFXInvertType driveInverted
     ) {
         motors = new WPI_TalonFX[] {
             new WPI_TalonFX(drivePort),
@@ -47,6 +49,7 @@ public class SwerveModule {
         m_isRotationOffset = isRotationOffset;
         m_rotationPort = rotationPort;
         m_RotInverted = rotInverted;
+        m_driveInverted = driveInverted;
 
 
         initializeMotors();
@@ -194,10 +197,10 @@ public class SwerveModule {
             motors[i].set(ControlMode.PercentOutput, 0);
             motors[i].setNeutralMode(NeutralMode.Brake);
             motors[i].configNeutralDeadband(0.001);
-            motors[0].setInverted(m_RotInverted);
+            motors[1].setInverted(m_RotInverted);
         }
         
-        motors[1].setInverted(TalonFXInvertType.CounterClockwise);
+        motors[0].setInverted(m_driveInverted);
     }
 
     /**

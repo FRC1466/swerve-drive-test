@@ -30,28 +30,32 @@ public class DriveSubsystem extends SubsystemBase {
     DriveConstants.FRONTLEFT_PORT_ROTATE,
     DriveConstants.FRONTLEFT_PORT_CANCODER,
     DriveConstants.FRONTLEFT_OFFSET,
-    true,
+    false,
+    TalonFXInvertType.CounterClockwise,
     TalonFXInvertType.CounterClockwise);
   private final SwerveModule frontRightModule = new SwerveModule(
     DriveConstants.FRONTRIGHT_PORT_DRIVE, 
     DriveConstants.FRONTRIGHT_PORT_ROTATE,
     DriveConstants.FRONTRIGHT_PORT_CANCODER,
     DriveConstants.FRONTRIGHT_OFFSET,
-    true,
-    TalonFXInvertType.CounterClockwise);
+    false,
+    TalonFXInvertType.CounterClockwise,
+    TalonFXInvertType.Clockwise);
   private final SwerveModule backLeftModule = new SwerveModule(
     DriveConstants.BACKLEFT_PORT_DRIVE, 
     DriveConstants.BACKLEFT_PORT_ROTATE,
     DriveConstants.BACKLEFT_PORT_CANCODER,
     DriveConstants.BACKLEFT_OFFSET,
-    true,
-    TalonFXInvertType.CounterClockwise);
+    false,
+    TalonFXInvertType.CounterClockwise,
+    TalonFXInvertType.Clockwise);
   private final SwerveModule backRightModule = new SwerveModule(
     DriveConstants.BACKRIGHT_PORT_DRIVE, 
     DriveConstants.BACKRIGHT_PORT_ROTATE,
     DriveConstants.BACKRIGHT_PORT_CANCODER,
     DriveConstants.BACKRIGHT_OFFSET,
-    true,
+    false,
+    TalonFXInvertType.CounterClockwise,
     TalonFXInvertType.CounterClockwise);
 
 
