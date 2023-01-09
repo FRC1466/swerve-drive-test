@@ -20,6 +20,7 @@ import frc.robot.Constants.DriveConstants;
 public class SwerveTrajectory {
     private DriveSubsystem m_drive;
 
+
     private TrajectoryConfig config =
         new TrajectoryConfig(
                 AutoConstants.MAX_SPEED_MPS,
